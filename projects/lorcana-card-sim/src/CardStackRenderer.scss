@@ -1,0 +1,45 @@
+.card-stack {
+  border: 1px solid black;
+  min-height: 300px;
+  min-width: 218px;
+
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  h2 {
+    text-align: center;
+  }
+
+  ._cards {
+    min-height: 300px;
+    flex-grow: 1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  &._type-horizontal {
+    ._cards {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  }
+  &._type-vertical {
+    ._cards {
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+  }
+  &._type-stack {
+    ._cards {
+      position: relative;
+      .card:not(:first-child) {
+        position: absolute;
+      }
+    }
+  }
+}

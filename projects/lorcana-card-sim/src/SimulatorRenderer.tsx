@@ -3,6 +3,7 @@ import React from "react";
 import LorcanaSimulator from "./api/LorcanaSimulator";
 import {Component} from "react";
 import CardRenderer from "./CardRenderer";
+import CardStackRenderer from "./CardStackRenderer";
 
 export default class SimulatorRenderer extends Component<SimulatorRendererProps, any> {
 
@@ -26,22 +27,34 @@ export default class SimulatorRenderer extends Component<SimulatorRendererProps,
         let sim = this.props.simulator;
         let hasAlterCards = sim.getCardsByState("alter_marked").length > 0;
         let remainingCards = sim.cardsInDeckCount();
+
+        let played = sim.getCardsByState(["played", "quest"]);
+        let inkwell = sim.getCardsByState(["inked", "inked_used"]);
+        let inkUsedCount = inkwell.filter(e=>e.state == "inked_used").length;
+        let discard = sim.getCardsByState("discard");
+        let hand = sim.getCardsByState(["hand","alter_marked"]);
+
         return <div className="simulator">
             <h1>Simulator</h1>
-            <div className="_cards _played">
-                {sim.getCardsByState(["played", "quest"]).map((card, i)=><CardRenderer card={card} simulator={sim} key={i}/>)}
-            </div>
+            <CardStackRenderer simulator={this.props.simulator}
+                               cards={played}
+                               title={`Played Cards (${played.length} ${played.length == 1 ? "card" : "cards"})`}
+                               className="_played"/>
             <div className="_cards _center">
-                <div className="_cards _inkwell">
-                    {sim.getCardsByState(["inked", "inked_used"]).map((card, i)=><CardRenderer card={card} simulator={sim} key={i}/>)}
-                </div>
-                <div className="_discard">
-                    {sim.getCardsByState("discard").map((card, i)=><CardRenderer card={card} simulator={sim} key={i}/>)}
-                </div>
+                <CardStackRenderer simulator={this.props.simulator}
+                                   cards={inkwell}
+                                   title={`Inkwell (${inkUsedCount}/${inkwell.length} ink)`}
+                                   className="_inkwell"/>
+                <CardStackRenderer simulator={this.props.simulator}
+                                   type={"stack"}
+                                   cards={discard}
+                                   title={`Discard Pile (${discard.length} ${discard.length == 1 ? "card" : "cards"})`}
+                                   className="_discard"/>
             </div>
-            <div className="_cards _hand">
-                {sim.getCardsByState(["hand","alter_marked"]).map((card, i)=><CardRenderer card={card} simulator={sim} key={i}/>)}
-            </div>
+            <CardStackRenderer simulator={this.props.simulator}
+                               cards={hand}
+                               title={`Hand (${hand.length} ${hand.length == 1 ? "card" : "cards"})`}
+                               className="_hand"/>
             <div className="_buttons">
                 <button className={"_alter " + (sim.hasAltered() || !hasAlterCards ? "_greyed" : "_usable")} onClick={()=>{sim.alter()}}>{sim.hasAltered() ? "Already altered" : hasAlterCards ? "Alter" : "Mark cards to Alter"}</button>
                 <button className="_reset" onClick={()=>{sim.reset();this.forceUpdate();}}>Reset</button>

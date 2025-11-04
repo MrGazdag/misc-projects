@@ -15,7 +15,7 @@ export function webpackConfigPreset(root=false) {
 
         output: {
             path: path.resolve(root ? `../dist/` : `../../dist/${projectName}/`),
-            filename: `[name].bundle.js`,
+            filename: `[name]-[contenthash].js`,
             assetModuleFilename: '[hash][ext][query]',
             publicPath: root ? `/` : `/${projectName}/`,
         },

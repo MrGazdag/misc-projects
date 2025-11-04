@@ -4,13 +4,18 @@ import App from "./App";
 import {createRoot} from "react-dom/client";
 import React from "react";
 import LorcanaApi from "./api/LorcanaApi";
+import Loader from "../../../common/Loader";
 
 (async ()=>{
     let api = new LorcanaApi();
-    await api.getApiCards();
     (window as any)["api"] = api;
 
-    api.setExtraCards(`[{
+    const root = createRoot(document.getElementById("root")!);
+    root.render(
+        <StrictMode>
+            <Loader text={"Loading Lorcana cards..."} promise={api.getApiCards()}>
+                {()=>{
+                    api.setExtraCards(`[{
     "Image": "https://cdn.dreamborn.ink/images/en/cards/010/6405ce4a96abee3111b1e53c28e11fab0d00e8e3",
     "Name": "Spooky Sight"
   },
@@ -26,8 +31,7 @@ import LorcanaApi from "./api/LorcanaApi";
     "Image": "https://cdn.dreamborn.ink/images/en/cards/010/cc2a8eec3d007ff60083ce48c2a26394ec7b6253",
     "Name": "Cinderella - Dream Come True"
   }]`)
-
-    api.parseDeck(`4 Captain Hook - Forceful Duelist
+                    api.parseDeck(`4 Captain Hook - Forceful Duelist
 4 Mulan - Disguised Soldier
 4 Sail The Azurite Sea
 4 Tipo - Growing Son
@@ -44,11 +48,9 @@ import LorcanaApi from "./api/LorcanaApi";
 1 Mufasa - Ruler of Pride Rock
 3 Vision of the Future
 2 Beyond the Horizon`);
-
-    const root = createRoot(document.getElementById("root")!);
-    root.render(
-        <StrictMode>
-            <App api={api}/>
+                    return <App api={api}/>;
+                }}
+            </Loader>
         </StrictMode>
     );
 })();

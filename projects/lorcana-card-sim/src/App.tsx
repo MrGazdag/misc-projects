@@ -14,7 +14,8 @@ export default class App extends Component<AppProps, AppState> {
             this.forceUpdate();
         };
         this.state = {
-            sim: new LorcanaSimulator(props.api.getDeckParseResults().deck)
+            sim: new LorcanaSimulator(props.api.getDeckParseResults().deck),
+            simIndex: 0
         };
     }
 
@@ -28,7 +29,8 @@ export default class App extends Component<AppProps, AppState> {
 
     resetSim() {
         this.setState({
-            sim: new LorcanaSimulator(this.props.api.getDeckParseResults().deck)
+            sim: new LorcanaSimulator(this.props.api.getDeckParseResults().deck),
+            simIndex: this.state.simIndex + 1
         });
     }
 
@@ -79,7 +81,7 @@ export default class App extends Component<AppProps, AppState> {
                     </div>
                 </div>
             </div>
-            <SimulatorRenderer simulator={this.state.sim}/>
+            <SimulatorRenderer key={this.state.simIndex+""} simulator={this.state.sim}/>
         </div>;
     }
 }
@@ -88,6 +90,7 @@ interface AppProps {
 }
 interface AppState {
     sim: LorcanaSimulator;
+    simIndex: number;
 }
 interface MorseValue {
     word: string,

@@ -3,6 +3,9 @@
   aspect-ratio: 0.717703349;
   position: relative;
   z-index: 0;
+  border-radius: 12px;
+  opacity: 1;
+  transition: opacity 0.2s ease-out;
   img {
     width: 100%;
     height: 100%;
@@ -92,6 +95,6 @@
   }
 
   &._alter_marked {
-    border: 10px solid red;
+    opacity: 0.5;
   }
 }
