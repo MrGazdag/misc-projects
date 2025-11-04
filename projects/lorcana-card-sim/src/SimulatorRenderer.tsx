@@ -30,7 +30,7 @@ export default class SimulatorRenderer extends Component<SimulatorRendererProps,
 
         let played = sim.getCardsByState(["played", "quest"]);
         let inkwell = sim.getCardsByState(["inked", "inked_used"]);
-        let inkUsedCount = inkwell.filter(e=>e.state == "inked_used").length;
+        let inkUsedCount = inkwell.filter(e=>e.state == "inked").length;
         let discard = sim.getCardsByState("discard");
         let hand = sim.getCardsByState(["hand","alter_marked"]);
 

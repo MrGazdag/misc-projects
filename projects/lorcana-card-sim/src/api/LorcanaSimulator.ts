@@ -153,7 +153,7 @@ export const StateToActions: Record<CardState,CardActions[]> = {
     inked: ["ink_use"],
     inked_used: [],
     quest: [],
-    played: ["quest"],
+    played: ["quest","discard","ink"],
     alter_marked: ["unmark_alter"]
 }
 export const ActionsToName: Record<CardActions,string> = {
