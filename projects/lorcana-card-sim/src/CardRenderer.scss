@@ -76,7 +76,9 @@
       transform: rotateY(0deg) rotateZ(90deg);
     }
     ._buttons {
-      transform: rotateZ(90deg);
+      left: -43px;
+      width: 300px;
+      aspect-ratio: 1.3933333339;
     }
   }
 
@@ -90,7 +92,9 @@
       transform: rotateY(180deg) rotateZ(-90deg);
     }
     ._buttons {
-      transform: rotateZ(90deg);
+      left: -43px;
+      width: 300px;
+      aspect-ratio: 1.3933333339;
     }
   }
 

@@ -28,10 +28,11 @@ export default class LorcanaApi {
     }
 
     public async getApiCards(): Promise<LorcanaCard[]> {
-        let json = await (await fetch("https://api.lorcana-api.com/bulk/cards")).json() as {Name: string, Image: string}[];
+        let json = await (await fetch("https://api.lorcana-api.com/bulk/cards")).json() as {Name: string, Image: string, Cost: number}[];
         this.apiCards.push(...json.map(e=>({
             name: e.Name,
-            image: e.Image
+            image: e.Image,
+            cost: e.Cost
         })));
         return this.apiCards;
     }
@@ -42,8 +43,9 @@ export default class LorcanaApi {
             error: null
         };
         try {
-            let json = JSON.parse(cardString) as {Name: string, Image: string}[];
+            let json = JSON.parse(cardString) as {Name: string, Image: string, Cost?: number}[];
             results.cards.push(...json.map(e=>({
+                cost: e.Cost ?? 0,
                 name: e.Name,
                 image: e.Image
             })));

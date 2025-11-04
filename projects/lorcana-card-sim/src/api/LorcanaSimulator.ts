@@ -73,13 +73,25 @@ export default class LorcanaSimulator {
         } else if (action == "quest") {
             card.state = "quest";
         } else if (action == "play") {
+            let cost = card.card.cost;
+            let inkwell = this.getCardsByState("inked");
+            if (inkwell.length >= cost) {
+                for (let i = 0; i < cost; i++) {
+                    inkwell[i].state = "inked_used";
+                    this.updateCard(inkwell[i]);
+                }
+            }
             card.lastGroupAction = Date.now();
+            card.state = "played";
+        } else if (action == "quest_undo") {
             card.state = "played";
         } else if (action == "ink") {
             card.lastGroupAction = Date.now();
             card.state = "inked";
         } else if (action == "ink_use") {
             card.state = "inked_used";
+        } else if (action == "ink_undo") {
+            card.state = "inked";
         }
         this.updateCard(card);
     }
@@ -144,16 +156,16 @@ export interface LorcanaCardInstance {
     ui: Set<()=>void>;
 }
 export type CardState = "deck" | "hand" | "discard" | "inked" | "inked_used" | "quest" | "played" | "alter_marked" | "altered";
-export type CardActions = "unmark_alter" | "mark_alter" | "discard" | "quest" | "play" | "ink" | "ink_use";
+export type CardActions = "unmark_alter" | "mark_alter" | "discard" | "quest" | "play" | "ink" | "ink_use" | "ink_undo" | "quest_undo";
 export const StateToActions: Record<CardState,CardActions[]> = {
     altered: [],
     deck: [],
     discard: [],
     hand: ["mark_alter", "discard", "play", "ink"],
     inked: ["ink_use"],
-    inked_used: [],
-    quest: [],
+    inked_used: ["ink_undo"],
     played: ["quest","discard","ink"],
+    quest: ["quest_undo","ink"],
     alter_marked: ["unmark_alter"]
 }
 export const ActionsToName: Record<CardActions,string> = {
@@ -163,5 +175,7 @@ export const ActionsToName: Record<CardActions,string> = {
     quest: "Quest",
     play: "Play",
     ink: "Ink",
-    ink_use: "Use Ink"
+    ink_use: "Use Ink",
+    ink_undo: "Undo Ink",
+    quest_undo: "Undo Quest"
 }
