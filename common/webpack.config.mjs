@@ -3,6 +3,7 @@ import {defineConfig} from "webpack-define-config";
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as fs from "node:fs";
+import {CleanWebpackPlugin} from "clean-webpack-plugin";
 
 export function webpackConfigPreset(root=false) {
     let projectName = path.resolve('./').split(path.sep).pop();
@@ -77,6 +78,7 @@ export function webpackConfigPreset(root=false) {
         },
 
         plugins: root ? [
+            new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: "../common/index.html",
                 publicPath: `./`,
@@ -87,6 +89,7 @@ export function webpackConfigPreset(root=false) {
                 //favicon: "../../common/favicon.ico"
             }),
         ] : [
+            new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: "../../common/index.html",
                 templateParameters: {
