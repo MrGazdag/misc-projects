@@ -2,6 +2,7 @@ import Track from "./Track";
 import {SerializedTrack} from "./SerializedData";
 import Car from "./Car";
 import Leaderboard from "./Leaderboard";
+import {RenderContext} from "../../../../common/CanvasRenderer";
 
 export default class Game {
     private static readonly carSpeed = 0.002;
@@ -28,7 +29,8 @@ export default class Game {
     getSizeMultiplier() {
         return this.sizeMultiplier;
     }
-    render(ctx: CanvasRenderingContext2D) {
+    render(context: RenderContext) {
+        let ctx = context.ctx;
         let canvas = ctx.canvas;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);

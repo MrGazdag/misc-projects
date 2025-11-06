@@ -3,6 +3,7 @@
   flex-direction: column;
   border: 1px solid black;
   padding: 10px;
+  overflow-y: auto;
   > div {
     padding: 10px;
   }

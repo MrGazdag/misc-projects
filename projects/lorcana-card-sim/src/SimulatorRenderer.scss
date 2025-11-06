@@ -23,6 +23,12 @@
 
         justify-content: center;
         align-items: center;
+        .card-stack {
+          flex-grow: 1;
+          &._discard {
+            flex-grow: 0;
+          }
+        }
       }
 
       > ._buttons {
@@ -42,12 +48,6 @@
             opacity: 0.5;
             pointer-events: none;
           }
-        }
-      }
-      .card-stack {
-        flex-grow: 1;
-        &._discard {
-          flex-grow: 0;
         }
       }
     }
