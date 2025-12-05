@@ -42,7 +42,7 @@ export default class DriverData {
         return this.data.id;
     }
 
-    getFlag() {
+    getFlagIcon() {
         return this.flag!;
     }
 
@@ -52,5 +52,9 @@ export default class DriverData {
 
     public getPlacementPoints(afterRace?: number) {
         return this.gameData.sumPlacementPointsForDriver(this.getId(), afterRace);
+    }
+
+    getCountry() {
+        return this.data.country;
     }
 }

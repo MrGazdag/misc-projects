@@ -29,7 +29,7 @@ export default class RaceResultsData {
             // Priority
             let priorityA = Priority[a.timeType];
             let priorityB = Priority[b.timeType];
-            if (priorityA !== priorityB) return priorityB - priorityA;
+            if (priorityA !== priorityB) return priorityA - priorityB;
 
             if (a.time == null && b.time == null) return 0;
             if (a.time == null && b.time != null) return 1;
@@ -57,9 +57,12 @@ export default class RaceResultsData {
 
             let pos = i+1;
             if (this.driverMap.has(driver)) throw new Error(`Race ${JSON.stringify(this.data.map)} has duplicate driver: ${JSON.stringify(driverData.playerId)}`);
+
+            let team = gameData.getTeam(driverData.teamId);
+            if (team == null) throw new Error(`Race ${JSON.stringify(this.data.map)}'s driver ${JSON.stringify(driverData.playerId)} has missing team: ${JSON.stringify(driverData.teamId)}`);
             this.driverMap.set(driver!, {
                 driver: driver,
-                team: driver.getTeam(),
+                team: team,
 
                 startingPosition: driverData.startingPosition,
                 finishingPosition: pos,
@@ -97,7 +100,7 @@ export default class RaceResultsData {
 }
 export interface RaceDriverData {
     driver: DriverData,
-    team: TeamData | null,
+    team: TeamData,
 
     startingPosition: number | null,
     finishingPosition: number

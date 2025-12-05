@@ -21,6 +21,7 @@ import gameData from "./game_data.json";
     let data: RawGameData = gameData as any;
 
     let f1 = new F1Renderer(data);
+    await f1.getGameData().init();
     const root = createRoot(document.getElementById("root")!);
     root.render(
         <StrictMode>

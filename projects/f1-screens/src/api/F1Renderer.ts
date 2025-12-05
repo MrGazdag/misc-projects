@@ -7,6 +7,7 @@ import ChangeableProperty from "./ChangeableProperty";
 import HeaderComponent from "./components/HeaderComponent";
 import {RenderContext} from "../../../../common/components/CanvasRenderer";
 import HeaderLineComponent from "./components/HeaderLineComponent";
+import PodiumComponent from "./components/PodiumComponent";
 
 export default class F1Renderer {
     private static timeMultiplier = 1;
@@ -36,7 +37,8 @@ export default class F1Renderer {
         this.allComponents = [
             new BackgroundComponent(),
             new HeaderComponent(),
-            new HeaderLineComponent()
+            new HeaderLineComponent(),
+            new PodiumComponent()
         ];
     }
 
@@ -120,6 +122,10 @@ export default class F1Renderer {
         for (let component of this.allComponents) {
             component.performRender(renderer, context);
         }
+    }
+
+    getRaceIndex() {
+        return this.raceIndex;
     }
 }
 export interface ComponentContext {

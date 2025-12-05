@@ -49,7 +49,8 @@ export default class GameData {
     async cacheCountryFlag(countryCode: string) {
         if (this.countryImageCache.has(countryCode)) return this.countryImageCache.get(countryCode)!;
 
-        let img = await Utils.loadImage(`https://flagsapi.com/${countryCode.toUpperCase()}/flat/64.png`);
+        let img = await Utils.loadImage(`https://raw.githubusercontent.com/kent1D/svg-flags/master/flags/${countryCode.toLowerCase()}.svg`);
+        console.log(img, img.naturalWidth, img.naturalHeight);
         this.countryImageCache.set(countryCode, img);
         return img;
     }

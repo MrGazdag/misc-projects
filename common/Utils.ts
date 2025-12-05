@@ -51,6 +51,7 @@ export default class Utils {
     public static loadImage(src: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject)=>{
             let img = new Image();
+            img.crossOrigin = "anonymous";
             img.onload = ()=>{
                 resolve(img);
             };
