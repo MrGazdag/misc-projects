@@ -13,21 +13,7 @@ export default class GameData {
     private readonly pointMap: Map<number,number>;
 
     constructor(raw: RawGameData) {
-        this.data = {
-            name: raw.name,
-            drivers: raw.drivers,
-            teamData: raw.teamData,
-            pointMap: raw.pointMap,
-            reserveIconUrl: raw.reserveIconUrl,
-            raceResults: raw.raceResults.map(r=>{
-                return {
-                    map: r.map,
-                    lapCount: r.lapCount,
-
-                    driverData: r.driverData
-                }
-            })
-        };
+        this.data = raw;
 
         this.teams = new Map();
         for (let team of this.data.teamData) {
@@ -119,8 +105,11 @@ export default class GameData {
         return this.pointMap.get(position) ?? 0;
     }
 
-    getRaceCount() {
+    getActualRaceCount() {
         return this.raceResults.length;
+    }
+    getPlannedRaceCount() {
+        return this.data.plannedRaceCount;
     }
 }
 export interface PlacementPoints {

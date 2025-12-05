@@ -41,7 +41,7 @@ vec4 image(vec2 fragCoord) {
 
     vec4 texel;
     vec2 size;
-    if ((mode.z/mode.w) < 0.5) {
+    if ((textureDelta/textureDuration) < 0.5) {
         texel = texture(textureFrom, fragCoord);
         size = vec2(textureSize(textureFrom, 0));
     } else {

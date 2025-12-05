@@ -5,6 +5,7 @@ export default interface RawGameData {
     reserveIconUrl: string;
     pointMap: Record<string, number>;
     name: string;
+    plannedRaceCount: number;
 }
 export interface RawRaceResultsData {
     map: string;

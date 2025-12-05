@@ -38,7 +38,7 @@ export default class HeaderComponent extends AbstractComponent {
             return this.getTexture(renderer, key, value, false);
         });
         this.roundCounterComponent = context.raceIndex.createDerived(raceIndex => {
-            let raceCount = context.gameData.getRaceCount();
+            let raceCount = context.gameData.getPlannedRaceCount();
             let key = "round_" + raceIndex + "_of_" + raceCount;
             let value = "Round " + (raceIndex + 1) + " of " + raceCount;
             return this.getTexture(renderer, key, value, false);
@@ -148,6 +148,6 @@ const TextureMap = {
     "nothing": "Nothing",
     "race_podium": "Race Podium",
     "race_results": "Race Results",
-    "constructors_standings": "Constructors Standings",
+    "constructors_standings": "Constructor Standings",
     "drivers_championship": "Drivers Championship",
 } satisfies Record<string, string>;
