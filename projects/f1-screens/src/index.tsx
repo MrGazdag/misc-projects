@@ -4,7 +4,7 @@ import App from "./App";
 import F1Renderer from "./api/F1Renderer";
 import RawGameData from "./api/data/RawGameData";
 import Formula1Regular from "./fonts/Formula1-Regular.otf";
-import Formula1Bold from "./fonts/Formula1-Bold.otf";
+import Formula1Bold from "./fonts/Formula1-Bold_mod.otf";
 import TextRenderer from "./api/TextRenderer";
 import gameData from "./game_data.json";
 (async ()=>{
