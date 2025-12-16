@@ -25,8 +25,8 @@ float expandAnim(bool was, bool will) {
     }
 }
 float expandOffsetAnim() {
-    bool was = intlt(iRaceIndex.x, position.x);
-    bool will = intlt(iRaceIndex.y, position.x);
+    bool was = intgteq(iRaceIndex.x, 0) && intlt(iRaceIndex.x, position.x);
+    bool will = intgteq(iRaceIndex.y, 0) && intlt(iRaceIndex.y, position.x);
     return expandAnim(was,will);
 }
 float expandSizeAnim() {
@@ -46,8 +46,8 @@ void main() {
     float fadeInStartDuration = 0.4;
     float fadeInStart = fadeInStartMin + ((fadeInStartMax-fadeInStartMin-fadeInStartDuration) / position.y) * position.x;
     float fadeInEnd = fadeInStart + fadeInStartDuration;
-
     float fadeInAlpha = 1.-cubicInOut(timed(modeTime, fadeInStart, fadeInEnd));
+
     float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z, 0., 1.)))
     + cubicInOut(timed(iRaceIndex.z, 1., 2.));
     float alpha = min(fadeInAlpha, barAlpha);
@@ -104,7 +104,7 @@ void main() {
 
     // Final calc
     float xOffset = (CALENDAR_ANIMATION_OFFSET / iResolution.x) * fadeInAlpha;
-    float yOffset = (position.x+0.5) * ((CALENDAR_ENTRY_HEIGHT+gap)/iResolution.y) + (expandOffset + expandSize/2.)/iResolution.y;
+    float yOffset = -gap/iResolution.y + (position.x+0.5) * ((CALENDAR_ENTRY_HEIGHT+gap)/iResolution.y) + (expandOffset + expandSize/2.)/iResolution.y;
 
     vec2 centerPos = centerAreaTopCenterPos - vec2(xOffset, yOffset);
 

@@ -33,8 +33,8 @@ export default class F1Renderer {
         this.startTime = (Date.now()/1000) * F1Renderer.timeMultiplier;
         this.initData = undefined;
 
-        this.mode = new ChangeableProperty(0, 2);
-        this.raceIndex = new ChangeableProperty(0, 2);
+        this.mode = new ChangeableProperty(5, 2);
+        this.raceIndex = new ChangeableProperty(-1, 2);
 
         this.allComponents = [
             new BackgroundComponent(),

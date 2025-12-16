@@ -21,4 +21,3 @@ vec2 fitOuterRectPosIntoInnerRect(vec2 pos, vec2 outer, vec2 inner) {
 
     return pos/s;
 }
-#define rectImage(tx, pos, center, size) (inRect(pos, center, size) ? texture(tx, rectPos(pos, center, size)) : vec4(0))

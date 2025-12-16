@@ -1,14 +1,27 @@
 uniform vec4 iMode;
 
-float modeTime(int target) {
-    bool fromOne = inteq(iMode.x, target);
-    bool toOne = inteq(iMode.y, target);
+float fromToInterp(vec4 data, int target) {
+    bool fromOne = inteq(data.x, target);
+    bool toOne = inteq(data.y, target);
 
-    if (fromOne && toOne) return iMode.w;
+    if (fromOne && toOne) return data.w;
     if (!fromOne && !toOne) return 0.;
 
-    if (toOne) return iMode.z;
-    else return iMode.w-iMode.z;
+    if (toOne) return data.z;
+    else return data.w-data.z;
+}
+float fromToInterpLtEq(vec4 data, int target) {
+    bool fromOne = intlteq(data.x, target);
+    bool toOne = intlteq(data.y, target);
+
+    if (fromOne && toOne) return data.w;
+    if (!fromOne && !toOne) return 0.;
+
+    if (toOne) return data.z;
+    else return data.w-data.z;
+}
+float modeTime(int target) {
+    return fromToInterp(iMode, target);
 }
 
 float modeTimeNZ() {

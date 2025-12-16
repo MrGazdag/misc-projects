@@ -23,8 +23,8 @@ export default class App extends Component<AppProps> {
                 let key = raceKeys[i];
                 if (e.key == key) {
                     let max = this.props.app.getGameData().getActualRaceCount();
-                    let value = Utils.clamp(i, 0, max);
-                    this.props.app.getRaceIndex().setValue(value);
+                    let value = Utils.clamp(i, 0, max+1);
+                    this.props.app.getRaceIndex().setValue(value-1);
                 }
             }
         };

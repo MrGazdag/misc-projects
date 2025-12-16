@@ -114,10 +114,10 @@ export default class GameData {
     }
 
     getActualRaceCount() {
-        return this.raceData.length;
+        return this.raceData.filter(e=>e.hasResults()).length;
     }
     getPlannedRaceCount() {
-        return this.data.plannedRaceCount;
+        return this.raceData.length;
     }
 }
 export interface PlacementPoints {

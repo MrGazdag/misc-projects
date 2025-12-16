@@ -66,8 +66,8 @@ export default class PodiumComponent extends AbstractComponent {
     }
     private updateRace(renderer: GLRenderer, context: ComponentContext) {
         let race = context.raceIndex.getDelta() > 1
-            ? context.raceIndex.getCurrentValue()
-            : context.raceIndex.getLastValue();
+            ? Math.max(context.raceIndex.getCurrentValue(), 0)
+            : Math.max(context.raceIndex.getLastValue(), 0);
 
         if (race == this.currentRace) return;
         this.currentRace = race;
