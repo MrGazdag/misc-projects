@@ -4,28 +4,16 @@ precision mediump float;
 in vec2 CornerPosition;
 uniform vec2 iResolution;
 uniform float iTime;
-uniform vec4 mode;
 
 out vec2 CornerPos;
 
 #include "./utils/utils.glsl"
 
-float fadeInModeTime() {
-    bool fromZero = roughly(mode[0], 0.);
-    bool toZero = roughly(mode[1], 0.);
-
-    if (!fromZero && !toZero) return mode.w;
-    if (fromZero && toZero) return 0.;
-
-    if (fromZero) return mode.z;
-    else return mode.w-mode.z;
-}
-
 void main() {
     vec2 zeroToOne = CornerPosition/2. + 0.5;
     CornerPos = zeroToOne;
 
-    float modeTime = fadeInModeTime();
+    float modeTime = modeTimeNZ();
     float barAlpha = cubicInOut(timed(modeTime, 1., 2.));
 
     vec2 centerPos = vec2(0.,1. - (GLOBAL_MARGIN.y + HEADER_HEIGHT + HEADER_LINE_MARGIN) / iResolution.y * 2.);

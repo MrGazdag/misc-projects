@@ -4,12 +4,11 @@ precision mediump float;
 in vec2 CornerPos;
 in vec2 boxSize;
 out vec4 fragColor;
-uniform vec4 mode;
 uniform vec4 raceIndex;
 
 uniform vec2 iResolution;
 uniform float iTime;
-uniform float position;
+uniform vec2 position;
 
 uniform sampler2D raceNumberTx;
 uniform sampler2D nameTx;
@@ -21,24 +20,14 @@ uniform sampler2D timeZoneTx;
 
 #include "./utils/utils.glsl"
 
-float fadeInModeTime() {
-    bool fromOne = roughly(mode[0], 1.);
-    bool toOne = roughly(mode[1], 1.);
-
-    if (fromOne && toOne) return mode.w;
-    if (!fromOne && !toOne) return 0.;
-
-    if (toOne) return mode.z;
-    else return mode.w-mode.z;
-}
 vec4 bg(vec2 pos) {
     return vec4(vec3(100,100.,100.)/255., 0.15);
 }
 
 void main()
 {
-    float modeTime = fadeInModeTime();
-    float fadeInAlpha = cubicInOut(timed(modeTime, 1., 2.));
+    float modeTime = modeTime(5);
+    float fadeInAlpha = cubicInOut(timed(modeTime, 1.5, 2.0));
     float barAlpha = (1. - cubicInOut(timed(raceIndex.z, 0., 1.)))
     + cubicInOut(timed(raceIndex.z, 1., 2.));
     float alpha = min(fadeInAlpha, barAlpha);

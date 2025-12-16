@@ -51,7 +51,7 @@ export default class HeaderComponent extends AbstractComponent {
             uniforms: {
                 iTime: props => props.time,
                 iResolution: props => props.screen,
-                mode: props=>props.mode,
+                iMode: props=>props.mode,
 
                 corner: props=>props.corner,
 
@@ -120,9 +120,6 @@ export default class HeaderComponent extends AbstractComponent {
     dispose() {
         this.program.dispose();
         this.pageTitleComponent?.dispose();
-
-        this.textureCacheMap.forEach(e=>e.dispose());
-        this.textureCacheMap.clear();
     }
 }
 interface InterpolatedImageProps {

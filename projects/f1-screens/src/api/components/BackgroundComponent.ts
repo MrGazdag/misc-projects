@@ -18,7 +18,7 @@ export default class BackgroundComponent extends AbstractComponent {
             uniforms: {
                 iTime: props => props.time,
                 iResolution: props => props.screen,
-                mode: props=>props.mode,
+                iMode: props=>props.mode,
                 //cursor: props=>props.cursor
             },
         });

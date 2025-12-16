@@ -8,7 +8,6 @@ uniform vec2 iResolution;
 uniform float iTime;
 
 uniform float corner;
-uniform vec4 mode;
 uniform sampler2D textureFrom;
 uniform sampler2D textureTo;
 uniform float textureDelta;
@@ -16,19 +15,8 @@ uniform float textureDuration;
 
 #include "./utils/utils.glsl"
 
-float fadeInModeTime() {
-    bool fromZero = roughly(mode[0], 0.);
-    bool toZero = roughly(mode[1], 0.);
-
-    if (!fromZero && !toZero) return mode.w;
-    if (fromZero && toZero) return 0.;
-
-    if (fromZero) return mode.z;
-    else return mode.w-mode.z;
-}
-
 vec4 image(vec2 fragCoord) {
-    float modeTime = fadeInModeTime();
+    float modeTime = modeTimeNZ();
     float hideAlpha = cubicInOut(timed(modeTime, 1., 2.));
 
     float textureAlpha = (1. - cubicIn(timed(textureDelta, 0., 1.)))

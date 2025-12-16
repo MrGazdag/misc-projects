@@ -7,9 +7,9 @@ out vec4 fragColor;
 uniform vec2 iResolution;
 uniform float iTime;
 
-uniform vec4 mode;
 //uniform vec2 cursor;
 #include "./utils/utils.glsl"
+#line 10012 0
 
 float circleNoise(vec2 p, float t, float dist) {
     vec4 param = vec4(p, 0., 0.);
@@ -19,18 +19,8 @@ float circleNoise(vec2 p, float t, float dist) {
     return cnoise(param);
 }
 
-float bgModeTime() {
-    bool fromZero = roughly(mode[0], 0.);
-    bool toZero = roughly(mode[1], 0.);
-
-    if (!fromZero && !toZero) return mode.w;
-    if (fromZero && toZero) return 0.;
-
-    if (fromZero) return mode.z;
-    else return mode.w-mode.z;
-}
 vec4 background() {
-    float modeTime = bgModeTime();
+    float modeTime = modeTimeNZ();
     float bgAlpha = cubicOut(timed(modeTime, 0., 0.4));
 
     return vec4(vec3(BG_COLOR)/255.,bgAlpha);
@@ -55,7 +45,7 @@ vec4 circles(vec2 fragCoord) {
     //vec3 pickedColor = mix(baseColor, accentColor, colorAlpha);
     vec3 pickedColor = baseColor;
 
-    float modeTime = bgModeTime();
+    float modeTime = modeTimeNZ();
     float alpha = cubicOut(timed(modeTime, 0.4, 0.8));
 
     //float cursorDistance = 1.-clamp(length(fragCoord-cursor)/100., 0., 1.);
@@ -67,10 +57,10 @@ const float wMult = 3.;
 const float[] widths = float[3](110.,  300.,  209.);
 const float widthTotal =       (110. + 300. + 209.) * wMult;
 vec4 rects(vec2 fragCoord) {
-    float modeTime = bgModeTime();
+    float modeTime = modeTimeNZ();
     float overlayAlpha = cubicOut(timed(modeTime, 0., 0.4));
     float rectsOpenAlpha = cubicOut(timed(modeTime, 0.4, 2.));
-    float rectsPushAlpha = sineInOut(mode.z/mode.w);
+    float rectsPushAlpha = sineInOut(iMode.z/iMode.w);
 
     mat2 skew = mat2(1, -1, 0, 1);
     //mat2 skew = mat2(1, 0, 0, 1);
@@ -133,7 +123,7 @@ vec4 rects(vec2 fragCoord) {
     float b2min = min(sweepMin2, 0.5);
     float b2max = min(sweepMin2, 0.7);
 
-    bool inside = (b1min < x && x < b1max) || (b2min < x && x < b2max);
+    bool inside = bool(b1min < x && x < b1max) || (b2min < x && x < b2max);
 
     vec4 outputColor = inside
     ? vec4(vec3(0.8),0.1 * overlayAlpha)

@@ -18,7 +18,7 @@ export default class HeaderLineComponent extends AbstractComponent {
             uniforms: {
                 iTime: props => props.time,
                 iResolution: props => props.screen,
-                mode: props=>props.mode,
+                iMode: props=>props.mode,
             },
         });
     }

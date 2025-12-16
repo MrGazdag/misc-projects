@@ -4,7 +4,6 @@ precision mediump float;
 in vec2 CornerPosition;
 uniform vec2 iResolution;
 uniform float iTime;
-uniform vec4 mode;
 uniform vec4 raceIndex;
 
 uniform float position;
@@ -15,14 +14,7 @@ out vec2 boxSize;
 #include "./utils/utils.glsl"
 
 float fadeInModeTime() {
-    bool fromOne = roughly(mode[0], 1.);
-    bool toOne = roughly(mode[1], 1.);
-
-    if (fromOne && toOne) return mode.w;
-    if (!fromOne && !toOne) return 0.;
-
-    if (toOne) return mode.z;
-    else return mode.w-mode.z;
+    return modeTime(1);
 }
 
 void main() {

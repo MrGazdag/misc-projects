@@ -4,8 +4,7 @@ precision mediump float;
 in vec2 CornerPos;
 in vec2 boxSize;
 out vec4 fragColor;
-uniform vec4 mode;
-uniform vec4 raceIndex;
+uniform vec4 iRaceIndex;
 
 uniform vec2 iResolution;
 uniform float iTime;
@@ -20,14 +19,7 @@ uniform sampler2D positionTex;
 #include "./utils/utils.glsl"
 
 float fadeInModeTime() {
-    bool fromOne = roughly(mode[0], 1.);
-    bool toOne = roughly(mode[1], 1.);
-
-    if (fromOne && toOne) return mode.w;
-    if (!fromOne && !toOne) return 0.;
-
-    if (toOne) return mode.z;
-    else return mode.w-mode.z;
+    return modeTime(1);
 }
 
 vec4 bg(vec2 pos) {
@@ -36,18 +28,11 @@ vec4 bg(vec2 pos) {
 vec4 drawImage(float heightOffset, float height, vec2 pos) {
     vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
     vec2 size = vec2(height, height);
-    if (inRect(pos, center, size)) {
-        //if (true) return vec4(1,0,0,1);
-        return texture(imageTex, rectPos(pos, center, size));
-    }
-    return vec4(0);
+    return rectImage(imageTex, pos, center, size);
 }
 vec4 drawName(float heightOffset, vec2 size, vec2 pos) {
     vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
-    if (inRect(pos, center, size)) {
-        return texture(nameTex, rectPos(pos, center, size));
-    }
-    return vec4(0);
+    return rectImage(nameTex, pos, center, size);
 }
 vec4 drawFlag(float heightOffset, float height, vec2 pos) {
     vec2 center = vec2(boxSize.x/2.+PODIUM_BADGE_GAP/2.+height/2., boxSize.y-heightOffset);
@@ -57,10 +42,7 @@ vec4 drawFlag(float heightOffset, float height, vec2 pos) {
 
     vec2 posInInner = fitOuterRectPosIntoInnerRect(pos-center, size, preferredSize);
 
-    if (inRect(posInInner, vec2(0), preferredSize)) {
-        return texture(flagTex, rectPos(posInInner, vec2(0), preferredSize));
-    }
-    return vec4(0);
+    return rectImage(flagTex, posInInner, vec2(0), preferredSize);
 }
 vec4 drawTeam(float heightOffset, float height, vec2 pos) {
     vec2 center = vec2(boxSize.x/2.-PODIUM_BADGE_GAP/2.-height/2., boxSize.y-heightOffset);
@@ -70,32 +52,27 @@ vec4 drawTeam(float heightOffset, float height, vec2 pos) {
 
     vec2 posInInner = fitOuterRectPosIntoInnerRect(pos-center, size, preferredSize);
 
-    if (inRect(posInInner, vec2(0), preferredSize)) {
-        return texture(teamTex, rectPos(posInInner, vec2(0), preferredSize));
-    }
-    return vec4(0);
+    return rectImage(teamTex, posInInner, vec2(0), preferredSize);
 }
 vec4 drawPosition(float heightOffset, vec2 size, vec2 pos) {
     vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
-    if (inRect(pos, center, size)) {
-        float alpha = texture(positionTex, rectPos(pos, center, size)).a;
-        ivec3 color = ivec3(255);
-        switch (int(round(position))) {
-            case 0: color = ivec3(216, 183,   0); break;
-            case 1: color = ivec3(175, 175, 175); break;
-            case 2: color = ivec3(182, 146, 120); break;
-        }
-        return vec4(vec3(color)/255., alpha);
+
+    ivec3 color = ivec3(255);
+    switch (int(round(position))) {
+        case 0: color = ivec3(216, 183,   0); break;
+        case 1: color = ivec3(175, 175, 175); break;
+        case 2: color = ivec3(182, 146, 120); break;
     }
-    return vec4(0);
+
+    return rectImage(positionTex, pos, center, size) * vec4(vec3(color)/255.,1.);
 }
 void main()
 {
 
     float modeTime = fadeInModeTime();
     float fadeInAlpha = cubicInOut(timed(modeTime, 1., 2.));
-    float barAlpha = (1. - cubicInOut(timed(raceIndex.z, 0., 1.)))
-                   + cubicInOut(timed(raceIndex.z, 1., 2.));
+    float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z, 0., 1.)))
+                   + cubicInOut(timed(iRaceIndex.z, 1., 2.));
     float alpha = min(fadeInAlpha, barAlpha);
 
     vec2 pos = CornerPos * boxSize;

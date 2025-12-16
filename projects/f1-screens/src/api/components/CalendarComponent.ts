@@ -175,10 +175,10 @@ export default class CalendarComponent extends AbstractComponent {
             uniforms: {
                 iTime: props => props.time,
                 iResolution: props => props.screen,
-                mode: props=>props.mode,
-                raceIndex: props => props.raceIndex,
+                iMode: props=>props.mode,
+                iRaceIndex: props => props.raceIndex,
 
-                position: props => props.position,
+                position: props => [props.position, this.allRaceData.length],
 
                 raceNumberTx: props => props.raceNumberTx,
                 nameTx: props => props.nameTx,
@@ -239,9 +239,6 @@ export default class CalendarComponent extends AbstractComponent {
 
     dispose() {
         this.program.dispose();
-
-        this.textureCacheMap.forEach(e=>e.dispose());
-        this.textureCacheMap.clear();
     }
 }
 const Positions = [
