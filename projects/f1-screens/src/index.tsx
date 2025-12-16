@@ -6,7 +6,7 @@ import RawGameData from "./api/data/RawGameData";
 import Formula1Regular from "./fonts/Formula1-Regular.otf";
 import Formula1Bold from "./fonts/Formula1-Bold_mod.otf";
 import TextRenderer from "./api/TextRenderer";
-import gameData from "./game_data.json";
+import gameData from "./game_data_season1.json";
 (async ()=>{
     let fonts: FontFace[] = [
         new FontFace("Formula1", "url(" + Formula1Regular +")", {weight: "normal"}),
