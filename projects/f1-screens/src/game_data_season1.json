@@ -161,9 +161,9 @@
             "results": null
         },
         {
-            "map": "Miami",
-            "mapFlag": "us",
-            "lapCount": 28,
+            "map": "Barcelona",
+            "mapFlag": "es",
+            "lapCount": 33,
             "date": "2026-01-24T19:00:00.000Z",
             "results": null
         },
@@ -189,37 +189,37 @@
             "results": null
         },
         {
+            "map": "Zandvoort",
+            "mapFlag": "nl",
+            "lapCount": 36,
+            "date": "2026-02-21T19:00:00.000Z",
+            "results": null
+        },
+        {
             "map": "Monza",
             "mapFlag": "it",
             "lapCount": 26,
-            "date": "2026-02-21T19:00:00.000Z",
+            "date": "2026-02-28T19:00:00.000Z",
             "results": null
         },
         {
             "map": "Mexico City",
             "mapFlag": "mx",
             "lapCount": 35,
-            "date": "2026-02-28T19:00:00.000Z",
-            "results": null
-        },
-        {
-            "map": "Interlagos",
-            "mapFlag": "br",
-            "lapCount": 20,
             "date": "2026-03-07T19:00:00.000Z",
-            "results": null
-        },
-        {
-            "map": "Lusail",
-            "mapFlag": "qa",
-            "lapCount": 28,
-            "date": "2026-03-14T19:00:00.000Z",
             "results": null
         },
         {
             "map": "Las Vegas",
             "mapFlag": "us",
             "lapCount": 25,
+            "date": "2026-03-14T19:00:00.000Z",
+            "results": null
+        },
+        {
+            "map": "Lusail",
+            "mapFlag": "qa",
+            "lapCount": 28,
             "date": "2026-03-21T19:00:00.000Z",
             "results": null
         },
