@@ -323,7 +323,7 @@ interface CalendarRaceData {
 }
 const ZONES = [
     {timezone: "Europe/Budapest", display: ["CET","CEST"], hour12: false},
-    {timezone: "America/New_York", display: ["ET","EST"], hour12: true},
+    {timezone: "America/New_York", display: ["EDT","EST"], hour12: true},
     {timezone: "Europe/London", display: ["GMT","BST"], hour12: false},
     {timezone: "Etc/UTC", display: ["UTC","UTC"], hour12: false},
 ]
