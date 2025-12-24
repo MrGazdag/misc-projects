@@ -13,11 +13,14 @@
         "@babel/preset-react": "^7.24.1",
         "@babel/preset-typescript": "^7.24.1",
         "@mrgazdag/ts-shader-loader": "^2.0.4",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
         "@types/node": "^18.0.0",
         "@types/react": "^18.2.73",
         "@types/react-dom": "^18.2.22",
         "@types/svg-sprite-loader": "^3.9.9",
         "@types/wicg-file-system-access": "^2020.9.6",
+        "@types/ws": "^8.18.1",
         "babel-loader": "^9.1.3",
         "clean-webpack-plugin": "^4.0.0",
         "copy-webpack-plugin": "^13.0.0",
@@ -40,8 +43,11 @@
     },
     "dependencies": {
         "@mrgazdag/gl-lite": "^0.0.1",
+        "cors": "^2.8.5",
+        "express": "^5.2.1",
         "framer-motion": "^12.23.24",
         "jszip": "^3.10.1",
-        "lygia": "^1.3.0"
+        "lygia": "^1.3.0",
+        "ws": "^8.18.3"
     }
 }

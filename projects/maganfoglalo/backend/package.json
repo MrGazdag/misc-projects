@@ -1,0 +1,28 @@
+{
+  "name": "maganfoglalo-backend",
+  "displayName": "Magánfoglaló",
+  "description": "Honfoglaló/Triviador clone",
+  "frontend": false,
+  "private": true,
+  "version": "0.1.0",
+  "license": "LGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrgazdag/misc-projects.git"
+  },
+  "scripts": {
+    "build": "webpack build",
+    "watch": "webpack watch --mode development",
+    "start": "tsx scripts/host.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/ws": "^8.18.1"
+  }
+}
