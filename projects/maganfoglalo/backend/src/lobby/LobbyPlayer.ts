@@ -51,6 +51,7 @@ export default class LobbyPlayer {
         this.handleClient(client);
     }
     private handleClient(client: NetworkClient) {
+        console.log("Player connected: ", this.name);
         client.setDisconnectHandler(()=>{
             this.client = null;
             this.broadcastUpdate(false);
@@ -62,6 +63,7 @@ export default class LobbyPlayer {
         });
     }
     private handlePackets(packet: LobbyC2SPacket) {
+        console.log("client packet: ", JSON.stringify(packet));
         if (packet.type == "lobby:player_self_update") {
             this.name = packet.name;
             this.ready = packet.ready;
@@ -72,7 +74,8 @@ export default class LobbyPlayer {
             if (this.role !== PlayerRole.GAME_MASTER) throw new Error("Only GM can set players");
             let target = this.lobby.getPlayer(packet.target);
             if (!target) throw new Error("Unknown player");
-
+        } else if (packet.type == "lobby:gm_start_game") {
+            this.lobby.startGame();
         }
     }
     private broadcastUpdate(includeSelf: boolean) {

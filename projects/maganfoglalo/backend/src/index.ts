@@ -5,10 +5,10 @@ import cors from "cors";
 import MaganfoglaloBackend from "./MaganfoglaloBackend";
 
 
-const PORT = 80;
+const PORT = 4000;
 
 let backend = new MaganfoglaloBackend();
-(window as any).backend = backend;
+(globalThis as any).backend = backend;
 
 const app = express();
 app.use(express.json());

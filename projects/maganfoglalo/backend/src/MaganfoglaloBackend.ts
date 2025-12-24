@@ -16,6 +16,7 @@ export default class MaganfoglaloBackend {
         } while (this.lobbies.has(key));
 
         let lobby = new Lobby(this, key);
+        console.log("created lobby: ", lobby.getKey());
         this.lobbies.set(key, lobby);
         return lobby;
     }
@@ -27,7 +28,9 @@ export default class MaganfoglaloBackend {
         this.lobbies.delete(lobby.getKey());
     }
     public handleClient(ws: WebSocket) {
+        console.log("some client connected");
         let client = new NetworkClient(ws, (e: LoginC2SHelloPacket)=>{
+            console.log("hello? ", e);
             if (e.type === "hello") {
                 let lobbyKey = e.key;
                 let lobby = this.lobbies.get(lobbyKey);

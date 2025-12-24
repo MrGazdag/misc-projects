@@ -34,6 +34,9 @@ export type LobbyS2CLobbyInitPacket = {
     type: "lobby:lobby_init",
     players: RawPlayerData[]
 }
+export type LobbyC2SGMStartGamePacket = {
+    type: "lobby:gm_start_game"
+}
 export type LobbyS2CStartGamePacket = {
     type: "lobby:start_game"
 }
@@ -51,6 +54,7 @@ export type LobbyC2SPackets =
     & Packet<LobbyC2SPlayerSelfUpdatePacket>
     & Packet<LobbyC2SQuitPacket>
     & Packet<LobbyC2SSetPlayerPacket>
+    & Packet<LobbyC2SGMStartGamePacket>
 ;
 
 export type LobbyS2CPackets =
