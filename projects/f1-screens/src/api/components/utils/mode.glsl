@@ -1,6 +1,9 @@
 uniform vec4 iMode;
 
-float fromToInterp(vec4 data, int target) {
+float fromToInterp(vec4 data) {
+    return mix(data.x, data.y, data.z/data.w);
+}
+float fromToInterpEq(vec4 data, int target) {
     bool fromOne = inteq(data.x, target);
     bool toOne = inteq(data.y, target);
 
@@ -21,7 +24,7 @@ float fromToInterpLtEq(vec4 data, int target) {
     else return data.w-data.z;
 }
 float modeTime(int target) {
-    return fromToInterp(iMode, target);
+    return fromToInterpEq(iMode, target);
 }
 
 float modeTimeNZ() {

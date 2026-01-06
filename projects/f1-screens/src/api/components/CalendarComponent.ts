@@ -186,20 +186,20 @@ export default class CalendarComponent extends AbstractComponent {
                 position: props => [props.position, this.allRaceData.length],
 
                 nextUpTx: this.getTextTexture(renderer, "next_up", " — NEXT RACE", true),
-                raceNumberTx: props => props.raceNumberTx,
-                nameTx: props => props.nameTx,
-                flagTx: props => props.flagTx,
+                raceNumberTx: props => props.data.raceNumberTx,
+                nameTx: props => props.data.nameTx,
+                flagTx: props => props.data.flagTx,
 
-                monthTx: props => props.monthTx,
-                dashTx: props => props.dashTx,
-                dayTx: props => props.dayTx,
+                monthTx: props => props.data.monthTx,
+                dashTx: props => props.data.dashTx,
+                dayTx: props => props.data.dayTx,
 
-                longDateTx: props => props.longDateTx,
-                shortTimeTx: props => props.shortTimeTx,
-                longTimeTx: props => props.longTimeTx,
-                timeZoneTx: props => props.timeZoneTx,
+                longDateTx: props => props.data.longDateTx,
+                shortTimeTx: props => props.data.shortTimeTx,
+                longTimeTx: props => props.data.longTimeTx,
+                timeZoneTx: props => props.data.timeZoneTx,
 
-                lapsTx: props => props.lapsTx,
+                lapsTx: props => props.data.lapsTx,
                 //mapTex: props => props.mapTx
             },
         });
@@ -251,22 +251,7 @@ export default class CalendarComponent extends AbstractComponent {
                 raceIndex: context.raceIndex.asVec4(),
 
                 position: i,
-
-                raceNumberTx: raceData.raceNumberTx,
-                nameTx: raceData.nameTx,
-                flagTx: raceData.flagTx,
-
-                monthTx: raceData.monthTx,
-                dashTx: raceData.dashTx,
-                dayTx: raceData.dayTx,
-
-                longDateTx: raceData.longDateTx,
-                shortTimeTx: raceData.shortTimeTx,
-                longTimeTx: raceData.longTimeTx,
-                timeZoneTx: raceData.timeZoneTx,
-
-                lapsTx: raceData.lapsTx,
-                //mapTx: raceData.map,
+                data: raceData
             });
         }
     }
@@ -287,21 +272,7 @@ interface InterpolatedImageProps {
 
     position: number,
 
-    raceNumberTx: GLTexture,
-    flagTx: GLTexture,
-    nameTx: GLTexture,
-
-    monthTx: GLTexture,
-    dashTx: GLTexture,
-    dayTx: GLTexture,
-
-    longDateTx: GLTexture,
-    shortTimeTx: GLTexture,
-    longTimeTx: GLTexture,
-    timeZoneTx: GLTexture,
-
-    lapsTx: GLTexture,
-    //mapTx: GLTexture,
+    data: CalendarRaceData
 }
 interface CalendarRaceData {
     raceNumberTx: GLTexture,

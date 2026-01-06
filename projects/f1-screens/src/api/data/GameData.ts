@@ -12,6 +12,9 @@ export default class GameData {
     private readonly raceData: RaceData[];
     private readonly pointMap: Map<number,number>;
 
+    private readonly teamPlacementsCache: Map<number,PlacementPoints<TeamData>[]>;
+    private readonly driverPlacementsCache: Map<number,PlacementPoints<DriverData>[]>;
+
     constructor(raw: RawGameData) {
         this.data = raw;
 
@@ -35,6 +38,9 @@ export default class GameData {
         this.raceData = this.data.raceResults.map((raw,i)=>new RaceData(this, i, raw));
 
         this.countryImageCache = new Map();
+
+        this.teamPlacementsCache = new Map();
+        this.driverPlacementsCache = new Map();
     }
 
     async init() {
@@ -49,6 +55,8 @@ export default class GameData {
             promises.push(race.init());
         }
         await Promise.all(promises);
+
+        this.calculatePlacements();
     }
 
     async cacheCountryFlag(countryCode: string) {
@@ -59,37 +67,96 @@ export default class GameData {
         return img;
     }
 
-    sumPlacementPointsForDriver(driverId: string, afterRace?: number): PlacementPoints {
-        let result: PlacementPoints = {
-            points: 0,
-
-            firsts: 0,
-            seconds: 0,
-            thirds: 0,
-        };
-
-        let driver = this.getDriver(driverId);
-        if (driver == null) return result;
-
-        let count = afterRace ?? this.raceData.length;
-        for (let i = 0; i < count; i++) {
-            let raceResults = this.raceData[i];
-            let driverData = raceResults.getDriverData(driver);
-            if (driverData == null) continue;
-
-            // Only count points when actually finished
-            if (typeof driverData.time !== "number") continue;
-
-            result.points += driverData.points;
-            if (driverData.finishingPosition == 1) {
-                result.firsts++;
-            } else if (driverData.finishingPosition == 2) {
-                result.seconds++;
-            } else if (driverData.finishingPosition == 3) {
-                result.thirds++;
+    private sortCopyPoints<T extends TeamData | DriverData>(array: PlacementPoints<T>[]): PlacementPoints<T>[] {
+        let copy = array.map(e=>{
+            return {
+                owner: e.owner,
+                points: e.points,
+                firsts: e.firsts,
+                seconds: e.seconds,
+                thirds: e.thirds
             }
+        });
+        copy.sort((a,b)=>{
+            let result = b.points - a.points;
+            if (result != 0) return result;
+
+            return a.owner.getName().localeCompare(b.owner.getName());
+        });
+        return copy;
+    }
+    private calculatePlacements() {
+        // Populate caches
+        let teams: PlacementPoints<TeamData>[] = [...this.teams.values()].map(t=>{
+            return {
+                owner: t,
+
+                points: 0,
+                firsts: 0,
+                seconds: 0,
+                thirds: 0
+            }
+        });
+        let drivers: PlacementPoints<DriverData>[] = [...this.drivers.values()].map(d=>{
+            return {
+                owner: d,
+
+                points: 0,
+                firsts: 0,
+                seconds: 0,
+                thirds: 0
+            }
+        });
+
+        this.teamPlacementsCache.set(-1, this.sortCopyPoints(teams));
+        this.driverPlacementsCache.set(-1, this.sortCopyPoints(drivers));
+
+        // Actually calculate
+        for (let raceIndex = 0; raceIndex < this.raceData.length; raceIndex++){
+            let race = this.raceData[raceIndex];
+            for (let data of race.getAllDriverData()) {
+                let teamPlacements = teams.find(e=>e.owner==data.team)!;
+                let driverPlacements = drivers.find(e=>e.owner==data.driver)!;
+
+                let points = data.points;
+                let first  = data.finishingPosition == 1 ? 1 : 0;
+                let second = data.finishingPosition == 2 ? 1 : 0;
+                let third  = data.finishingPosition == 3 ? 1 : 0;
+
+                teamPlacements.points += points;
+                driverPlacements.points += points;
+
+                teamPlacements.firsts += first;
+                teamPlacements.seconds += second;
+                teamPlacements.thirds += third;
+
+                driverPlacements.firsts += first;
+                driverPlacements.seconds += second;
+                driverPlacements.thirds += third;
+            }
+            this.teamPlacementsCache.set(raceIndex, this.sortCopyPoints(teams));
+            this.driverPlacementsCache.set(raceIndex, this.sortCopyPoints(drivers));
         }
-        return result;
+    }
+
+    getPlacementPointTeams(afterRace?: number) {
+        if (afterRace == null) afterRace = this.raceData.length;
+        else if (afterRace < 0) afterRace = -1;
+        else afterRace = Math.min(afterRace, this.getActualRaceCount()-1);
+        return this.teamPlacementsCache.get(afterRace+1)!;
+    }
+    getPlacementPointsForTeam(team: TeamData, afterRace?: number): PlacementPoints<TeamData> {
+        return this.getPlacementPointTeams(afterRace).find(e=>e.owner==team)!
+    }
+
+    getPlacementPointDrivers(afterRace?: number) {
+        if (afterRace == null) afterRace = this.raceData.length;
+        else if (afterRace < 0) afterRace = -1;
+        else afterRace = Math.min(afterRace, this.getActualRaceCount()-1);
+        return this.driverPlacementsCache.get(afterRace+1)!;
+    }
+    getPlacementPointsForDriver(driver: DriverData, afterRace?: number): PlacementPoints<DriverData> {
+        return this.getPlacementPointDrivers(afterRace).find(e=>e.owner==driver)!;
     }
 
     getName() {
@@ -119,8 +186,16 @@ export default class GameData {
     getPlannedRaceCount() {
         return this.raceData.length;
     }
+
+    getAllTeams() {
+        return [...this.teams.values()];
+    }
+    getAllDrivers() {
+        return [...this.drivers.values()];
+    }
 }
-export interface PlacementPoints {
+export interface PlacementPoints<T> {
+    owner: T,
     points: number,
     firsts: number,
     seconds: number,

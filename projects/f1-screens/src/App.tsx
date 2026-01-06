@@ -105,7 +105,7 @@ export default class App extends Component<AppProps, AppState> {
                         }} />
                 <button onClick={()=>{
                     this.closeOverlay();
-                }}>Save</button>
+                }}>Display</button>
             </div>;
         }
         return <div className="app">

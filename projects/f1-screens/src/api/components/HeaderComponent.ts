@@ -158,7 +158,7 @@ const ModeNames = [
     "nothing",
     "race_podium",
     "race_results",
-    "constructors_standings",
+    "constructors_standing",
     "drivers_championship",
     "calendar"
 ] satisfies Record<number, keyof typeof TextureMap>;
@@ -166,7 +166,7 @@ const TextureMap = {
     "nothing": "Nothing",
     "race_podium": "Race Podium",
     "race_results": "Race Results",
-    "constructors_standings": "Constructor Standings",
+    "constructors_standing": "Constructor Standings",
     "drivers_championship": "Drivers Championship",
     "calendar": "Calendar",
 } satisfies Record<string, string>;

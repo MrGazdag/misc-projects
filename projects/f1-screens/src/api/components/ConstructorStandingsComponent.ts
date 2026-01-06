@@ -1,18 +1,21 @@
 import {GLProgram, GLRenderer, GLTexture} from "@mrgazdag/gl-lite";
-import podiumVsh from "./PodiumComponent.vsh";
-import podiumFsh from "./PodiumComponent.fsh";
+import constructorVsh from "./ConstructorStandingsComponent.vsh";
+import constructorFsh from "./ConstructorStandingsComponent.fsh";
 import AbstractComponent from "./AbstractComponent";
 import {ComponentContext} from "../F1Renderer";
 import TextureUtils from "../TextRenderer";
-export default class PodiumComponent extends AbstractComponent {
+import ChangeableProperty from "../ChangeableProperty";
+import TeamData from "../data/TeamData";
+
+export default class ConstructorStandingsComponent extends AbstractComponent {
     private textureCacheMap = new Map<string,GLTexture>();
     private program!: GLProgram<InterpolatedImageProps>;
 
     private currentRace: number = -1;
-    private userData!: UserData[];
+    private teamData!: TeamEntry[];
 
     shouldRender(context: ComponentContext): boolean {
-        return context.mode.checkValue(e=>e==1);
+        return context.mode.checkValue(e=>e==3);
     }
 
     private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
@@ -39,29 +42,51 @@ export default class PodiumComponent extends AbstractComponent {
         this.textureCacheMap.set(key, result);
         return result!;
     }
-
+    private getTextTextureDiff(renderer: GLRenderer, key: string, value: string, diff: number, bold: boolean) {
+        if (this.textureCacheMap.has(key)) {
+            return this.textureCacheMap.get(key)!;
+        }
+        const font = {family: "Formula1",size:"60px",weight: bold ? "bold" : "normal"};
+        let result = TextureUtils.updateOrNew(renderer, undefined, TextureUtils.renderTextWithDiff(font, value, diff));
+        this.textureCacheMap.set(key, result);
+        return result!;
+    }
 
     init(renderer: GLRenderer, context: ComponentContext): void {
         // Create a shader program
         this.program = this.createRect<InterpolatedImageProps>(renderer, context, {
-            vert: podiumVsh,
-            frag: podiumFsh,
+            vert: constructorVsh,
+            frag: constructorFsh,
             uniforms: {
                 iTime: props => props.time,
                 iResolution: props => props.screen,
                 iMode: props=>props.mode,
                 iRaceIndex: props => props.raceIndex,
 
-                position: props => props.position,
+                position: props => props.data.positionValue.asVec4(),
+                positionTx: props => props.data.positionTx,
+                iconTx: props => props.data.iconTx,
+                nameTx: props => props.data.nameTx,
 
-                nameTex: props => props.data.name,
-                imageTex: props => props.data.image,
-                flagTex: props => props.data.flagImage,
-                teamTex: props => props.data.teamImage,
-                positionTex: props => props.data.positionTex
+                pointsTx: props => props.data.pointsTx,
             },
         });
 
+        this.teamData = [];
+        for (let team of context.gameData.getAllTeams()) {
+            this.teamData.push({
+                team: team,
+                positionValue: context.raceIndex.createDerived(raceIndex=>{
+                    return context.gameData.getPlacementPointTeams(raceIndex).findIndex(t=>t.owner == team);
+                }),
+                positionTx: null!,
+                nameTx: null!,
+                iconTx: null!,
+                pointsTx: null!,
+            });
+        }
+
+        this.currentRace = -2;
         this.updateRace(renderer, context);
     }
     private updateRace(renderer: GLRenderer, context: ComponentContext) {
@@ -72,36 +97,27 @@ export default class PodiumComponent extends AbstractComponent {
         if (race == this.currentRace) return;
         this.currentRace = race;
 
-        this.userData = [];
-        let raceResults = context.gameData.getRaceData(race);
-        if (!raceResults.hasResults()) return;
-        let drivers = raceResults.getAllDriverData();
-        for (let i = 0; i < 3; i++) {
-            let result = drivers[i];
-            let driver = result.driver;
-            let team = result.team;
-            this.userData.push({
-                id: driver.getId(),
-                name: this.getTextTexture(renderer, "podium_name_" + driver.getId(), driver.getName(), true),
-                teamImage: this.getImageTexture(renderer, "team_" + team.getId(), team.getIcon()),
-                image: this.getImageTexture(renderer, "driver_" + driver.getId(), driver.getIcon()),
-                flagImage: this.getImageTexture(renderer, "flag_" + driver.getCountry(), driver.getFlagIcon()),
-                positionTex: this.getTextTexture(renderer, "podium_position_" + i, Positions[i], true),
-            });
+        let points = context.gameData.getPlacementPointTeams(race);
+        for (let team of this.teamData) {
+            let pos = team.positionValue.getCurrentValue();
+            let pointData = points[pos];
+            team.positionTx = this.getTextTexture(renderer, "pos_" + pos, (pos+1)+"", false);
+            team.iconTx = this.getImageTexture(renderer, "team_icon_" + team.team.getId(), team.team.getIcon());
+            team.nameTx = this.getTextTexture(renderer, "team_name_" + team.team.getId(), team.team.getName(), false);
+            team.pointsTx = this.getTextTexture(renderer, "points_" + pointData.points, pointData.points+"", false);
         }
     }
     render(renderer: GLRenderer, context: ComponentContext): void {
         this.updateRace(renderer, context);
-        for (let i = 0; i < this.userData.length; i++){
-            let userData = this.userData[i];
+        for (let i = 0; i < this.teamData.length; i++){
+            let raceData = this.teamData[i];
             this.program.draw({
                 time: context.time.delta,
                 screen: context.screen,
                 mode: context.mode.asVec4(),
                 raceIndex: context.raceIndex.asVec4(),
 
-                position: i,
-                data: userData,
+                data: raceData
             });
         }
     }
@@ -114,26 +130,20 @@ export default class PodiumComponent extends AbstractComponent {
         this.textureCacheMap.clear();
     }
 }
-const Positions = [
-    "1st",
-    "2nd",
-    "3rd",
-]
 interface InterpolatedImageProps {
     time: number;
     screen: [number, number];
     mode: [number, number, number, number];
     raceIndex: [number, number, number, number]
 
-    position: number,
-
-    data: UserData
+    data: TeamEntry
 }
-interface UserData {
-    id: string,
-    name: GLTexture,
-    image: GLTexture,
-    teamImage: GLTexture,
-    flagImage: GLTexture,
-    positionTex: GLTexture,
+interface TeamEntry {
+    team: TeamData,
+    positionValue: ChangeableProperty<number>,
+    positionTx: GLTexture,
+    iconTx: GLTexture,
+    nameTx: GLTexture,
+
+    pointsTx: GLTexture,
 }

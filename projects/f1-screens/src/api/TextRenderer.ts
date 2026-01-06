@@ -56,6 +56,65 @@ export default class TextRenderer {
             ...options
         };
     }
+    public static renderTextWithDiff(font: FontData, str: string, diff:number, options?: Partial<Omit<GLTextureParams, "data"|"width"|"height"|"format">>): Partial<GLTextureParams> {
+        if (this.canvas == null) this.init();
+
+        diff = Math.round(diff);
+
+        const padding = 5;
+        const gap = 20;
+
+        let combined = this.combineFont(font);
+
+        this.ctx.font = combined;
+        let textMetrics = this.ctx.measureText(str);
+        let textHeight = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
+
+        const arrowSize = textHeight * 0.5;
+
+        let diffMetrics = this.ctx.measureText(Math.abs(diff)+"");
+
+        this.canvas.width = padding + textMetrics.width + (diff == 0 ? 0 : gap + arrowSize + gap + diffMetrics.width) + padding;
+        this.canvas.height = textHeight + 2*padding;
+
+        this.ctx.font = combined;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = "white";
+        this.ctx.textBaseline = "middle";
+        this.ctx.fillText(str, padding, padding + this.canvas.height/2);
+
+        if (diff != 0) {
+            let color = diff < 0 ? "red" : "green";
+
+            // Arrow
+            let arrowStart = padding + textMetrics.width + gap;
+            let heightCenter = (this.canvas.height - textMetrics.fontBoundingBoxAscent) / 2 + textMetrics.fontBoundingBoxAscent/2;
+            let mul = Math.sign(diff);
+
+            this.ctx.strokeStyle = color;
+            this.ctx.lineWidth = 10;
+            this.ctx.beginPath();
+            this.ctx.moveTo(arrowStart                  , heightCenter + mul *  0.25 * arrowSize);
+            this.ctx.lineTo(arrowStart + arrowSize * 0.5, heightCenter + mul * -0.25 * arrowSize);
+            this.ctx.lineTo(arrowStart + arrowSize      , heightCenter + mul *  0.25 * arrowSize);
+            this.ctx.stroke();
+
+            // Text
+            this.ctx.fillStyle = color;
+            this.ctx.textBaseline = "middle";
+            this.ctx.fillText(Math.abs(diff)+"", arrowStart + arrowSize + gap, padding + this.canvas.height/2);
+        }
+        let data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        return {
+            data: data,
+            width: this.canvas.width,
+            height: this.canvas.height,
+            format: "rgba",
+            flipY: true,
+
+            ...options
+        };
+    }
     public static renderMultilineIndexed(font: FontData, strings: string[], textAlign: "left"|"center"|"right", options?: Partial<Omit<GLTextureParams, "data"|"width"|"height"|"format">>): Partial<GLTextureParams> {
         if (this.canvas == null) this.init();
 

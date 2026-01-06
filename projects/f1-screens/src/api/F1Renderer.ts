@@ -9,6 +9,7 @@ import HeaderLineComponent from "./components/HeaderLineComponent";
 import PodiumComponent from "./components/PodiumComponent";
 import CalendarComponent from "./components/CalendarComponent";
 import JSZip from "jszip";
+import ConstructorStandingsComponent from "./components/ConstructorStandingsComponent";
 
 export default class F1Renderer {
     private static timeMultiplier = 1;
@@ -48,8 +49,10 @@ export default class F1Renderer {
             new BackgroundComponent(),
             new HeaderComponent(),
             new HeaderLineComponent(),
+
             new PodiumComponent(),
-            new CalendarComponent()
+            new ConstructorStandingsComponent(),
+            new CalendarComponent(),
         ];
     }
 

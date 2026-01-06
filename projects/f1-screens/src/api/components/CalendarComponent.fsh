@@ -213,7 +213,7 @@ void main()
     float fadeInEnd = fadeInStart + fadeInStartDuration;
     float fadeInAlpha = cubicInOut(timed(modeTime, fadeInStart, fadeInEnd));
 
-    float selectTime = fromToInterp(iRaceIndex, int(position));
+    float selectTime = fromToInterpEq(iRaceIndex, int(position));
     float selectAlpha = 1.-cubicInOut(timed(selectTime, 0.0, 0.5))
                          + cubicInOut(timed(selectTime, 1.5, 2.0));
 

@@ -28,4 +28,8 @@ export default class TeamData {
     getIcon() {
         return this.icon!;
     }
+
+    public getPlacementPoints(afterRace?: number) {
+        return this.gameData.getPlacementPointsForTeam(this, afterRace);
+    }
 }

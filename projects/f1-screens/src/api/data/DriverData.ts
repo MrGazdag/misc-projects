@@ -51,7 +51,7 @@ export default class DriverData {
     }
 
     public getPlacementPoints(afterRace?: number) {
-        return this.gameData.sumPlacementPointsForDriver(this.getId(), afterRace);
+        return this.gameData.getPlacementPointsForDriver(this, afterRace);
     }
 
     getCountry() {
