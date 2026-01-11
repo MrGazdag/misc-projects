@@ -11,6 +11,7 @@ export default class GameData {
     private readonly countryImageCache: Map<string, HTMLImageElement>;
     private readonly raceData: RaceData[];
     private readonly pointMap: Map<number,number>;
+    private reserveIcon?: HTMLImageElement;
 
     private readonly teamPlacementsCache: Map<number,PlacementPoints<TeamData>[]>;
     private readonly driverPlacementsCache: Map<number,PlacementPoints<DriverData>[]>;
@@ -45,6 +46,9 @@ export default class GameData {
 
     async init() {
         let promises: Promise<void>[] = [];
+        promises.push((async ()=>{
+            this.reserveIcon = await Utils.loadImage(this.data.reserveIconUrl);
+        })());
         for (let driver of this.drivers.values()) {
             promises.push(driver.init());
         }
@@ -192,6 +196,10 @@ export default class GameData {
     }
     getAllDrivers() {
         return [...this.drivers.values()];
+    }
+
+    getReserveIcon() {
+        return this.reserveIcon!;
     }
 }
 export interface PlacementPoints<T> {

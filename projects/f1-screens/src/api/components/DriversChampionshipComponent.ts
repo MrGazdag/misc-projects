@@ -144,7 +144,7 @@ export default class DriversChampionshipComponent extends AbstractComponent {
             let pos = points.findIndex(t => t.owner == driver.driver);
 
             driver.positionTx = this.getTextTexture(renderer, "pos_" + pos, (pos+1)+"", false);
-            driver.iconTx = this.getImageTexture(renderer, "team_icon_" + driver.driver.getId(), driver.driver.getIcon());
+            driver.iconTx = this.getImageTexture(renderer, "team_icon_" + driver.driver.getId(), driver.driver.getTeamIcon());
             driver.flagTx = this.getImageTexture(renderer, "flag_" + driver.driver.getCountry(), driver.driver.getFlagIcon());
             driver.nameTx = this.getTextTexture(renderer, "driver_name_" + driver.driver.getId(), driver.driver.getName(), true);
         }

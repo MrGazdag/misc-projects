@@ -57,4 +57,8 @@ export default class DriverData {
     getCountry() {
         return this.data.country;
     }
+
+    getTeamIcon() {
+        return this.team?.getIcon() ?? this.gameData.getReserveIcon();
+    }
 }
