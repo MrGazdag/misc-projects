@@ -66,8 +66,7 @@ vec4 drawPosition(float heightOffset, vec2 size, vec2 pos) {
 
     return rectImage(positionTex, pos, center, size) * vec4(vec3(color)/255.,1.);
 }
-void main()
-{
+void main() {
 
     float modeTime = fadeInModeTime();
     float fadeInAlpha = cubicInOut(timed(modeTime, 1., 2.));

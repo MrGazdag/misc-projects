@@ -131,8 +131,7 @@ vec4 rects(vec2 fragCoord) {
 
     return outputColor;
 }
-void main()
-{
+void main() {
     vec2 fragCoord = CornerPos;
     fragColor = background();
     fragColor = alphaMix(fragColor, circles(fragCoord));

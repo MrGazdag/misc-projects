@@ -202,8 +202,7 @@ vec4 drawLaps(vec2 pos) {
     return rectImage(lapsTx, pos, center, size);
 }
 
-void main()
-{
+void main() {
     float modeTime = modeTime(5);
 
     float fadeInStartMin = 1.5;

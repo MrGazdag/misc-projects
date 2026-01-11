@@ -44,7 +44,8 @@ export default class TextRenderer {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.fillStyle = "white";
         this.ctx.textBaseline = "middle";
-        this.ctx.fillText(str, padding, padding + this.canvas.height/2);
+        this.ctx.fillText(str, padding, this.canvas.height/2);
+
         let data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         return {
             data: data,
@@ -81,7 +82,7 @@ export default class TextRenderer {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.fillStyle = "white";
         this.ctx.textBaseline = "middle";
-        this.ctx.fillText(str, padding, padding + this.canvas.height/2);
+        this.ctx.fillText(str, padding, this.canvas.height/2);
 
         if (diff != 0) {
             let color = diff < 0 ? "red" : "green";
@@ -102,7 +103,7 @@ export default class TextRenderer {
             // Text
             this.ctx.fillStyle = color;
             this.ctx.textBaseline = "middle";
-            this.ctx.fillText(Math.abs(diff)+"", arrowStart + arrowSize + gap, padding + this.canvas.height/2);
+            this.ctx.fillText(Math.abs(diff)+"", arrowStart + arrowSize + gap, this.canvas.height/2);
         }
         let data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         return {

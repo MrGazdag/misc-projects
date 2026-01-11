@@ -49,8 +49,7 @@ vec4 image(vec2 fragCoord) {
 
     return texel * vec4(vec3(HEADER_COLOR)/255., mask);
 }
-void main()
-{
+void main() {
     vec2 fragCoord = CornerPos;
     fragColor = image(fragCoord);
 }

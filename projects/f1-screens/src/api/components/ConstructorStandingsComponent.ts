@@ -52,6 +52,10 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
         return result!;
     }
 
+    private getTextTextureDiffPoints(renderer: GLRenderer, point: number, diff: number) {
+        return this.getTextTextureDiff(renderer, "points_" + point + "_diff_" + diff, point+"", diff, false);
+    }
+
     init(renderer: GLRenderer, context: ComponentContext): void {
         // Create a shader program
         this.program = this.createRect<InterpolatedImageProps>(renderer, context, {
@@ -69,7 +73,10 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
                 positionTx: props => props.data.positionTx,
                 iconTx: props => props.data.iconTx,
                 nameTx: props => props.data.nameTx,
-                pointsTx: props => props.data.pointsTx,
+                pointsTxOld: props => props.data.pointsTxOld,
+                pointsTxNew: props => props.data.pointsTxNew,
+                pointsDiffTxOld: props => props.data.pointsDiffTxOld,
+                pointsDiffTxNew: props => props.data.pointsDiffTxNew,
                 pointsValue: props => props.data.pointsValue.asVec4(),
             },
         });
@@ -84,7 +91,10 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
                 positionTx: null!,
                 nameTx: null!,
                 iconTx: null!,
-                pointsTx: null!,
+                pointsTxOld: null!,
+                pointsTxNew: null!,
+                pointsDiffTxOld: null!,
+                pointsDiffTxNew: null!,
 
                 pointsValue: context.raceIndex.createDerived((raceIndex,prev)=>{
                     return context.gameData.getPlacementPointTeams(raceIndex).find(t => t.owner == team)!.points;
@@ -95,20 +105,48 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
         this.currentRace = -2;
         this.updateRace(renderer, context);
     }
+    private getDiffedPos(context: ComponentContext, team: TeamData, raceIndex: number) {
+        if (raceIndex == 0) return 0;
+
+        let lastPoints = context.gameData.getPlacementPointTeams(raceIndex-1);
+        let points = context.gameData.getPlacementPointTeams(raceIndex);
+
+        let lastPos = lastPoints.findIndex(t => t.owner == team);
+        let pos = points.findIndex(t => t.owner == team);
+
+        return lastPos - pos;
+    }
     private updateRace(renderer: GLRenderer, context: ComponentContext) {
         let race = context.raceIndex.getActiveValue();
+
+        let lastPoints = context.gameData.getPlacementPointTeams(context.raceIndex.getLastValue());
+        let points = context.gameData.getPlacementPointTeams(context.raceIndex.getCurrentValue());
+        // Always update this eagerly
+        for (let team of this.teamData) {
+            let lastPos = lastPoints.findIndex(t => t.owner == team.team);
+            let lastPointData = lastPoints[lastPos];
+            let lastPointDiff = this.getDiffedPos(context, team.team, context.raceIndex.getLastValue());
+
+            let pos = points.findIndex(t => t.owner == team.team);
+            let pointData = points[pos];
+            let pointDiff = this.getDiffedPos(context, team.team, context.raceIndex.getCurrentValue());
+
+            team.pointsTxOld = this.getTextTexture(renderer, "points_" + lastPointData.points, lastPointData.points+"", true);
+            team.pointsTxNew = this.getTextTexture(renderer, "points_" + pointData.points, pointData.points+"", true);
+            team.pointsDiffTxOld = this.getTextTextureDiff(renderer, "diff_" + lastPointDiff, "", lastPointDiff, false);
+            team.pointsDiffTxNew = this.getTextTextureDiff(renderer, "diff_" + pointDiff, "", pointDiff, false);
+        }
 
         if (race == this.currentRace) return;
         this.currentRace = race;
 
-        let points = context.gameData.getPlacementPointTeams(race);
+        // Only update the rest when it actually changed
         for (let team of this.teamData) {
-            let pos = team.positionValue.getCurrentValue();
-            let pointData = points[pos];
+            let pos = points.findIndex(t => t.owner == team.team);
+
             team.positionTx = this.getTextTexture(renderer, "pos_" + pos, (pos+1)+"", false);
             team.iconTx = this.getImageTexture(renderer, "team_icon_" + team.team.getId(), team.team.getIcon());
-            team.nameTx = this.getTextTexture(renderer, "team_name_" + team.team.getId(), team.team.getName(), false);
-            team.pointsTx = this.getTextTexture(renderer, "points_" + pointData.points, pointData.points+"", false);
+            team.nameTx = this.getTextTexture(renderer, "team_name_" + team.team.getId(), team.team.getName(), true);
         }
     }
     render(renderer: GLRenderer, context: ComponentContext): void {
@@ -150,7 +188,9 @@ interface TeamEntry {
     positionTx: GLTexture,
     iconTx: GLTexture,
     nameTx: GLTexture,
-    pointsTx: GLTexture,
-
+    pointsTxOld: GLTexture,
+    pointsTxNew: GLTexture,
+    pointsDiffTxOld: GLTexture,
+    pointsDiffTxNew: GLTexture,
     pointsValue: ChangeableProperty<number>;
 }

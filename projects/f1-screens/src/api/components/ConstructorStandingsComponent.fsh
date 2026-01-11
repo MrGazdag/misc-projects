@@ -14,7 +14,11 @@ uniform float entryCount;
 uniform sampler2D positionTx;
 uniform sampler2D iconTx;
 uniform sampler2D nameTx;
-uniform sampler2D pointsTx;
+uniform sampler2D pointsTxOld;
+uniform sampler2D pointsTxNew;
+uniform sampler2D pointsDiffTxOld;
+uniform sampler2D pointsDiffTxNew;
+uniform vec4 pointsValue;
 
 #include "./utils/utils.glsl"
 
@@ -35,7 +39,7 @@ vec4 positionBox(vec2 size, vec2 pos, float anim) {
     if (abs(c.x-c.y) >= anim*0.75) return vec4(0.);
     return vec4(vec3(200., 200., 200.)/255.,1.);
 }
-vec4 drawPosition(vec2 boxSize, vec2 pos) {
+vec4 drawPosition(vec2 pos) {
     vec2 txSize = vec2(textureSize(positionTx, 0));
     vec2 center = vec2(boxSize.y/2.);
     float mul = boxSize.y*0.6;
@@ -52,6 +56,37 @@ vec4 drawImage(vec2 pos) {
 
     return rectImage(iconTx, posInInner, vec2(0), preferredSize);
 }
+vec4 drawName(vec2 pos) {
+    vec2 txSize = vec2(textureSize(nameTx, 0));
+    float mul = boxSize.y*0.8;
+    vec2 size = vec2(txSize.x/txSize.y * mul, mul);
+    vec2 center = vec2(boxSize.y + CONSTRUCTOR_ENTRY_PADDING + boxSize.y*0.7 + CONSTRUCTOR_ENTRY_PADDING + size.x/2., boxSize.y/2.);
+    if (false) {
+        return alphaMix(inRect(pos, center, size) ? vec4(1,0,0,1) : vec4(0), rectImage(nameTx, pos, center, size));
+    }
+    return rectImage(nameTx, pos, center, size);
+}
+vec4 drawPoints(vec2 pos, bool newTx, bool diffTx) {
+    vec2 txSize = vec2(diffTx
+        ? (newTx
+            ? textureSize(pointsDiffTxNew, 0)
+            : textureSize(pointsDiffTxOld, 0))
+        : (newTx
+            ? textureSize(pointsTxNew, 0)
+            : textureSize(pointsTxOld, 0))
+    );
+    float mul = boxSize.y*0.8;
+    vec2 size = vec2(txSize.x/txSize.y * mul, mul);
+    vec2 center = vec2(boxSize.x - CONSTRUCTOR_ENTRY_POINTS + (diffTx ? 1. : -1.) * size.x/2., boxSize.y/2.);
+
+    if (diffTx) {
+        if (newTx) return rectImage(pointsDiffTxNew, pos, center, size);
+        else       return rectImage(pointsDiffTxOld, pos, center, size);
+    } else {
+        if (newTx) return rectImage(    pointsTxNew, pos, center, size);
+        else       return rectImage(    pointsTxOld, pos, center, size);
+    }
+}
 vec4 animateChange(vec4 color, vec4 data) {
     if (abs(data.z-data.w) < 0.001) return color;
     float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z/iRaceIndex.w, 0.25, 0.5)))
@@ -60,11 +95,15 @@ vec4 animateChange(vec4 color, vec4 data) {
     color.a *= barAlpha;
     return color;
 }
-void main()
-{
+vec4 crossfadeChange(vec4 colorA, vec4 colorB, vec4 data) {
+    //if (abs(data.z-data.w) < 0.001) return colorB;
+    float barAlpha = cubicInOut(timed(iRaceIndex.z/iRaceIndex.w, 0.25, 0.75));
+    return mix(colorA, colorB, barAlpha);
+}
+void main() {
     float modeTime = fadeInModeTime();
     float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z, 0., 1.)))
-                   + cubicInOut(timed(iRaceIndex.z, 1., 2.));
+    + cubicInOut(timed(iRaceIndex.z, 1., 2.));
     float alpha = min(1., barAlpha);
 
     float fadeInStartRange = 0.3;
@@ -77,12 +116,15 @@ void main()
     fragColor = alphaMix(fragColor, positionBox(vec2(boxSize.y), pos, cubicOut(timed(modeTime, 1.5, 1.8))));
 
     vec4 contentColor = vec4(0.);
-    contentColor = alphaMix(contentColor, animateChange(drawPosition(boxSize, pos),position));
+    contentColor = alphaMix(contentColor, animateChange(drawPosition(pos),position));
     contentColor = alphaMix(contentColor, drawImage(pos));
+    contentColor = alphaMix(contentColor, crossfadeChange(drawPoints(pos, false, false),drawPoints(pos, true, false),pointsValue));
+    contentColor = alphaMix(contentColor, crossfadeChange(drawPoints(pos, false,  true),drawPoints(pos, true,  true),pointsValue));
+    contentColor = alphaMix(contentColor, drawName(pos));
     contentColor.a *= cubicOut(timed(modeTime, 2.5, 2.7));
     fragColor = alphaMix(fragColor, contentColor);
 
-    /*
+/*
     float offset = PODIUM_PADDING.y;
     vec2 size = vec2(0., PODIUM_IMAGE_HEIGHT);
     fragColor = alphaMix(fragColor, drawImage(offset+size.y/2., size.y, pos));
