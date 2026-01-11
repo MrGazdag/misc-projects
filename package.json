@@ -1,4 +1,6 @@
 {
+    "name": "misc-projects",
+    "private": true,
     "workspaces": [
         "index",
         "projects/**"
