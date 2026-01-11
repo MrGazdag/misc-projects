@@ -64,11 +64,13 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
                 iRaceIndex: props => props.raceIndex,
 
                 position: props => props.data.positionValue.asVec4(),
+                entryCount: props => props.entryCount,
+
                 positionTx: props => props.data.positionTx,
                 iconTx: props => props.data.iconTx,
                 nameTx: props => props.data.nameTx,
-
                 pointsTx: props => props.data.pointsTx,
+                pointsValue: props => props.data.pointsValue.asVec4(),
             },
         });
 
@@ -76,13 +78,17 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
         for (let team of context.gameData.getAllTeams()) {
             this.teamData.push({
                 team: team,
-                positionValue: context.raceIndex.createDerived(raceIndex=>{
-                    return context.gameData.getPlacementPointTeams(raceIndex).findIndex(t=>t.owner == team);
+                positionValue: context.raceIndex.createDerived((raceIndex,prev)=>{
+                    return context.gameData.getPlacementPointTeams(raceIndex).findIndex(t => t.owner == team);
                 }),
                 positionTx: null!,
                 nameTx: null!,
                 iconTx: null!,
                 pointsTx: null!,
+
+                pointsValue: context.raceIndex.createDerived((raceIndex,prev)=>{
+                    return context.gameData.getPlacementPointTeams(raceIndex).find(t => t.owner == team)!.points;
+                }),
             });
         }
 
@@ -90,7 +96,7 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
         this.updateRace(renderer, context);
     }
     private updateRace(renderer: GLRenderer, context: ComponentContext) {
-        let race = Math.max(context.raceIndex.getActiveValue(), 0);
+        let race = context.raceIndex.getActiveValue();
 
         if (race == this.currentRace) return;
         this.currentRace = race;
@@ -115,6 +121,7 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
                 mode: context.mode.asVec4(),
                 raceIndex: context.raceIndex.asVec4(),
 
+                entryCount: this.teamData.length,
                 data: raceData
             });
         }
@@ -134,6 +141,7 @@ interface InterpolatedImageProps {
     mode: [number, number, number, number];
     raceIndex: [number, number, number, number]
 
+    entryCount: number;
     data: TeamEntry
 }
 interface TeamEntry {
@@ -142,6 +150,7 @@ interface TeamEntry {
     positionTx: GLTexture,
     iconTx: GLTexture,
     nameTx: GLTexture,
-
     pointsTx: GLTexture,
+
+    pointsValue: ChangeableProperty<number>;
 }

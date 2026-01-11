@@ -30,7 +30,7 @@ void main() {
 
     float gap = 20.;
 
-    float actualPosition = mix(position.x, position.y, cubicInOut(timed(position.z/position.w, 0., 0.5)));
+    float actualPosition = mix(position.x, position.y, cubicInOut(timed(position.z/position.w, 0.25, 0.75)));
 
     // Final calc
     float yOffset = -gap/iResolution.y + (actualPosition+0.5) * ((CALENDAR_ENTRY_HEIGHT+gap)/iResolution.y);

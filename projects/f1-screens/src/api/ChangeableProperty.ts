@@ -82,15 +82,14 @@ export default class ChangeableProperty<T> {
         this.changeTime = ChangeableProperty.now;
 
         for (let child of this.children) {
-            let converted = child.convert(this.current);
+            let converted = child.convert(this.current, child.property.current);
             if (converted == child.property.current) continue;
-            console.log("diff", child.property.current, this.last, "->", this.current, converted);
 
             child.property.last = child.property.current;
             child.property.current = converted;
 
             child.property.changeTime = this.changeTime;
-            child.property.changeDuration = this.changeDuration;
+            //child.property.changeDuration = this.changeDuration;
         }
     }
 
@@ -98,6 +97,11 @@ export default class ChangeableProperty<T> {
         this.last = this.current;
         this.current = target;
         this.changeTime = ChangeableProperty.now - this.changeDuration;
+
+        for (let child of this.children) {
+            let converted = child.convert(this.current);
+            child.property.overwrite(converted);
+        }
     }
 
     createDerived<R>(func: (value: T, prev?: R)=>R): ChangeableProperty<R> {

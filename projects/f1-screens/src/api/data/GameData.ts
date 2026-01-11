@@ -143,7 +143,7 @@ export default class GameData {
         if (afterRace == null) afterRace = this.raceData.length;
         else if (afterRace < 0) afterRace = -1;
         else afterRace = Math.min(afterRace, this.getActualRaceCount()-1);
-        return this.teamPlacementsCache.get(afterRace+1)!;
+        return this.teamPlacementsCache.get(afterRace)!;
     }
     getPlacementPointsForTeam(team: TeamData, afterRace?: number): PlacementPoints<TeamData> {
         return this.getPlacementPointTeams(afterRace).find(e=>e.owner==team)!

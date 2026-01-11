@@ -9,12 +9,12 @@ uniform vec4 iRaceIndex;
 uniform vec2 iResolution;
 uniform float iTime;
 uniform vec4 position;
+uniform float entryCount;
 
-uniform sampler2D nameTex;
-uniform sampler2D imageTex;
-uniform sampler2D flagTex;
-uniform sampler2D teamTex;
-uniform sampler2D positionTex;
+uniform sampler2D positionTx;
+uniform sampler2D iconTx;
+uniform sampler2D nameTx;
+uniform sampler2D pointsTx;
 
 #include "./utils/utils.glsl"
 
@@ -27,8 +27,7 @@ vec4 bg(vec2 size, vec2 pos, float anim) {
 
     vec2 c = pos/size.y;
     if (c.x-c.y < -0.75) return vec4(0.);
-    //return vec4(vec3(100,100.,100.)/255., 0.15);
-    return vec4(vec3(255,100.,100.)/255., 0.75);
+    return vec4(vec3(100,100.,100.)/255., 0.15);
 }
 vec4 positionBox(vec2 size, vec2 pos, float anim) {
     vec2 c = pos/size.y;
@@ -36,59 +35,52 @@ vec4 positionBox(vec2 size, vec2 pos, float anim) {
     if (abs(c.x-c.y) >= anim*0.75) return vec4(0.);
     return vec4(vec3(200., 200., 200.)/255.,1.);
 }
-vec4 drawImage(float heightOffset, float height, vec2 pos) {
-    vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
-    vec2 size = vec2(height, height);
-    return rectImage(imageTex, pos, center, size);
+vec4 drawPosition(vec2 boxSize, vec2 pos) {
+    vec2 txSize = vec2(textureSize(positionTx, 0));
+    vec2 center = vec2(boxSize.y/2.);
+    float mul = boxSize.y*0.6;
+    vec2 size = vec2(txSize.x/txSize.y * mul, mul);
+    return rectImage(positionTx, pos, center, size) * vec4(0.,0.,0.,1.);
 }
-vec4 drawName(float heightOffset, vec2 size, vec2 pos) {
-    vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
-    return rectImage(nameTex, pos, center, size);
-}
-vec4 drawFlag(float heightOffset, float height, vec2 pos) {
-    vec2 center = vec2(boxSize.x/2.+PODIUM_BADGE_GAP/2.+height/2., boxSize.y-heightOffset);
+vec4 drawImage(vec2 pos) {
+    vec2 center = vec2(boxSize.y + CONSTRUCTOR_ENTRY_PADDING + boxSize.y*0.7/2., boxSize.y/2.);
 
-    vec2 preferredSize = vec2(textureSize(flagTex, 0));
-    vec2 size = vec2(height);
+    vec2 preferredSize = vec2(textureSize(iconTx, 0));
+    vec2 size = vec2(boxSize.y*0.7);
 
     vec2 posInInner = fitOuterRectPosIntoInnerRect(pos-center, size, preferredSize);
 
-    return rectImage(flagTex, posInInner, vec2(0), preferredSize);
+    return rectImage(iconTx, posInInner, vec2(0), preferredSize);
 }
-vec4 drawTeam(float heightOffset, float height, vec2 pos) {
-    vec2 center = vec2(boxSize.x/2.-PODIUM_BADGE_GAP/2.-height/2., boxSize.y-heightOffset);
+vec4 animateChange(vec4 color, vec4 data) {
+    if (abs(data.z-data.w) < 0.001) return color;
+    float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z/iRaceIndex.w, 0.25, 0.5)))
+    + cubicInOut(timed(iRaceIndex.z/iRaceIndex.w, 0.5, 0.75));
 
-    vec2 preferredSize = vec2(textureSize(teamTex, 0));
-    vec2 size = vec2(height);
-
-    vec2 posInInner = fitOuterRectPosIntoInnerRect(pos-center, size, preferredSize);
-
-    return rectImage(teamTex, posInInner, vec2(0), preferredSize);
-}
-vec4 drawPosition(float heightOffset, vec2 size, vec2 pos) {
-    vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
-
-    ivec3 color = ivec3(255);
-    switch (int(round(position))) {
-        case 0: color = ivec3(216, 183,   0); break;
-        case 1: color = ivec3(175, 175, 175); break;
-        case 2: color = ivec3(182, 146, 120); break;
-    }
-
-    return rectImage(positionTex, pos, center, size) * vec4(vec3(color)/255.,1.);
+    color.a *= barAlpha;
+    return color;
 }
 void main()
 {
     float modeTime = fadeInModeTime();
-    float fadeInAlpha = cubicInOut(timed(modeTime, 1., 2.));
     float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z, 0., 1.)))
                    + cubicInOut(timed(iRaceIndex.z, 1., 2.));
-    float alpha = min(fadeInAlpha, barAlpha);
+    float alpha = min(1., barAlpha);
+
+    float fadeInStartRange = 0.3;
+    modeTime -= ((fadeInStartRange) / entryCount) * position.y;
+    modeTime = max(modeTime, 0.);
 
     vec2 pos = CornerPos * boxSize;
 
-    fragColor = bg(boxSize, pos, cubicOut(timed(modeTime, 1.2, 1.6)));
-    fragColor = alphaMix(fragColor, positionBox(vec2(boxSize.y), pos, cubicOut(timed(modeTime, 1.0, 1.2))));
+    fragColor = bg(boxSize, pos, cubicOut(timed(modeTime, 1.8, 2.5)));
+    fragColor = alphaMix(fragColor, positionBox(vec2(boxSize.y), pos, cubicOut(timed(modeTime, 1.5, 1.8))));
+
+    vec4 contentColor = vec4(0.);
+    contentColor = alphaMix(contentColor, animateChange(drawPosition(boxSize, pos),position));
+    contentColor = alphaMix(contentColor, drawImage(pos));
+    contentColor.a *= cubicOut(timed(modeTime, 2.5, 2.7));
+    fragColor = alphaMix(fragColor, contentColor);
 
     /*
     float offset = PODIUM_PADDING.y;
