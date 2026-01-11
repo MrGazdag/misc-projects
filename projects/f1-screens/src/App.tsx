@@ -1,7 +1,7 @@
 import React from "react";
 import {Component} from "react";
 import CanvasRenderer from "../../../common/components/CanvasRenderer";
-import F1Renderer from "./api/F1Renderer";
+import F1Renderer, {RecordOptions} from "./api/F1Renderer";
 import "./App.scss";
 import Utils from "../../../common/Utils";
 import {Editor} from "@monaco-editor/react";
@@ -11,10 +11,11 @@ import game_data_schema from "./game_data.schema.json";
 export default class App extends Component<AppProps, AppState> {
     private overlayCloseHandler: (()=>Promise<void>) | null;
     private keyDownHandler: (e: KeyboardEvent)=>void;
-    private recording: boolean = false;
+    private recording: RecordOptions | null;
     constructor(props: AppProps) {
         super(props);
         this.overlayCloseHandler = null;
+        this.recording = null;
 
         this.state = {
             tabOpen: null
@@ -68,8 +69,33 @@ export default class App extends Component<AppProps, AppState> {
     render() {
         let overlay = null;
         if (this.state.tabOpen == "record") {
+            let recordResult = this.props.app.getRecordResult();
+
+            let widthRef = React.createRef<HTMLInputElement>();
+            let heightRef = React.createRef<HTMLInputElement>();
+            let fpsRef = React.createRef<HTMLInputElement>();
+            let durationRef = React.createRef<HTMLInputElement>();
             overlay = <div className="_overlay record">
-                <button onClick={()=>{this.recording = true;}}>Record</button>
+                <label style={{backgroundColor: "white",padding: "10px"}}>Width (pixels)</label>
+                <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={widthRef} step={1} placeholder="Width" defaultValue="1080"/>
+                <label style={{backgroundColor: "white",padding: "10px"}}>Height (pixels)</label>
+                <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={heightRef} step={1} placeholder="Height" defaultValue="1080"/>
+                <label style={{backgroundColor: "white",padding: "10px"}}>FPS</label>
+                <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={fpsRef} placeholder="FPS" defaultValue="60"/>
+                <label style={{backgroundColor: "white",padding: "10px"}}>Duration (Seconds)</label>
+                <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={durationRef} placeholder="Duration" defaultValue="20"/>
+                <button onClick={()=>{
+                    this.recording = {
+                        width: 1080,
+                        height: 1080,
+                        seconds: durationRef.current!.valueAsNumber,
+                        fps: fpsRef.current!.valueAsNumber
+                    };
+                }} disabled={this.props.app.isRecording()}>Record</button>
+                {recordResult == null ? null : <div>
+                    <h2>Result</h2>
+                    {recordResult.type == "download" ? <a href={recordResult.url} download={recordResult.name}>Download</a> : <video style={{height: "200px"}} src={recordResult.url} autoPlay muted loop></video>}
+                </div>}
             </div>;
         } else if (this.state.tabOpen == "data") {
             overlay = <div className="_overlay data">
@@ -118,13 +144,14 @@ export default class App extends Component<AppProps, AppState> {
                 depth: false
             }} renderFunc={async (ctx)=>{
                 if (this.recording) {
-                    await this.props.app.record(ctx, {
-                        width: 1080,
-                        height: 1080,
-                        seconds: 20,
-                        fps: 60
+                    let data = this.recording;
+                    this.recording = null;
+                    this.props.app.record(ctx, data).then(()=>{
+                        this.setState({
+                            tabOpen: "record"
+                        })
                     });
-                    this.recording = false;
+                    this.forceUpdate();
                 }
                 if (!this.props.app.isRecording()) {
                     this.props.app.render(ctx);

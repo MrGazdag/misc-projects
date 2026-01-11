@@ -44,6 +44,8 @@
         "wrangler": "^4.45.0"
     },
     "dependencies": {
+        "@ffmpeg/ffmpeg": "^0.12.15",
+        "@ffmpeg/util": "^0.12.2",
         "@monaco-editor/react": "^4.7.0",
         "@mrgazdag/gl-lite": "^0.0.1",
         "cors": "^2.8.5",
@@ -52,6 +54,7 @@
         "jszip": "^3.10.1",
         "lygia": "^1.3.0",
         "monaco-editor": "^0.55.1",
+        "mp4-muxer": "^5.2.2",
         "ws": "^8.18.3"
     }
 }

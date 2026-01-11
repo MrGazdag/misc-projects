@@ -11,6 +11,10 @@ import CalendarComponent from "./components/CalendarComponent";
 import JSZip from "jszip";
 import ConstructorStandingsComponent from "./components/ConstructorStandingsComponent";
 import DriversChampionshipComponent from "./components/DriversChampionshipComponent";
+import {FFmpeg} from "@ffmpeg/ffmpeg";
+import {toBlobURL} from "@ffmpeg/util";
+import FFmpegMP4Exporter from "./exporter/FFmpegMP4Exporter";
+import WebCodecsMP4Exporter from "./exporter/WebCodecsMP4Exporter";
 
 export default class F1Renderer {
     private static timeMultiplier = 1;
@@ -31,6 +35,7 @@ export default class F1Renderer {
     private gameData: GameData;
 
     private recording: boolean;
+    private recordResult: RecordResults | undefined;
 
     private allComponents: AbstractComponent[];
     constructor(rawGameData: string) {
@@ -45,6 +50,7 @@ export default class F1Renderer {
         this.raceIndex = new ChangeableProperty(-1, 2);
 
         this.recording = false;
+        this.recordResult = undefined;
 
         this.allComponents = [
             new BackgroundComponent(),
@@ -86,7 +92,8 @@ export default class F1Renderer {
 
         this.recording = true;
         try {
-            let zip = new JSZip();
+            let exporter = new WebCodecsMP4Exporter();
+            await exporter.setup(options);
 
             let start = 0;
             ChangeableProperty.setNow(0);
@@ -98,32 +105,18 @@ export default class F1Renderer {
 
             for (let i = 0; i < totalFrames; i++) {
                 let time = start + i * frameTime;
+                context.ctx.canvas.width = options.width;
+                context.ctx.canvas.height = options.height;
                 console.log("rendering frame", i, "/", totalFrames, "   ", time, "/", options.seconds);
                 this.render(context, time);
                 let canvas = context.ctx.canvas as HTMLCanvasElement;
-                let blob = await new Promise<Blob>((res,rej)=>{
-                    canvas.toBlob(b=>{
-                        if (!b) rej(new Error("Failed to create blob"));
-                        res(b!);
-                    }, "image/png");
-                });
-                zip.file(`${i}.png`, blob);
+                await exporter.frame(i, canvas);
             }
 
-            // Generate zip (Blob) and download
-            const zipBlob = await zip.generateAsync({
-                type: "blob",
-                compression: "DEFLATE",
-                compressionOptions: { level: 6 },
-            });
-
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(zipBlob);
-            a.download = `capture.zip`;
-            a.click();
-            URL.revokeObjectURL(a.href);
+            this.recordResult = await exporter.complete();
         } finally {
             this.recording = false;
+            this.reset();
         }
     }
 
@@ -219,6 +212,10 @@ export default class F1Renderer {
     getRaceIndex() {
         return this.raceIndex;
     }
+
+    getRecordResult() {
+        return this.recordResult;
+    }
 }
 export interface ComponentContext {
     mode: ChangeableProperty<number>,
@@ -241,4 +238,9 @@ export interface RecordOptions {
     height: number,
     fps: number,
     seconds: number
+}
+export interface RecordResults {
+    type: "download" | "video"
+    url: string,
+    name: string,
 }
