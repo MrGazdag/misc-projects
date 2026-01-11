@@ -89,9 +89,10 @@ export default class F1Renderer {
             let zip = new JSZip();
 
             let start = 0;
+            ChangeableProperty.setNow(0);
             this.startTime = start;
-            //this.mode.overwrite(5);
-            //this.raceIndex.overwrite(-1);
+            this.mode.overwrite(this.mode.getCurrentValue());
+            this.raceIndex.overwrite(this.raceIndex.getCurrentValue());
             let totalFrames = options.seconds * options.fps;
             let frameTime = 1/options.fps;
 
