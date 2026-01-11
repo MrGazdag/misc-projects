@@ -10,6 +10,7 @@ import PodiumComponent from "./components/PodiumComponent";
 import CalendarComponent from "./components/CalendarComponent";
 import JSZip from "jszip";
 import ConstructorStandingsComponent from "./components/ConstructorStandingsComponent";
+import DriversChampionshipComponent from "./components/DriversChampionshipComponent";
 
 export default class F1Renderer {
     private static timeMultiplier = 1;
@@ -52,6 +53,7 @@ export default class F1Renderer {
 
             new PodiumComponent(),
             new ConstructorStandingsComponent(),
+            new DriversChampionshipComponent(),
             new CalendarComponent(),
         ];
     }

@@ -153,7 +153,7 @@ export default class GameData {
         if (afterRace == null) afterRace = this.raceData.length;
         else if (afterRace < 0) afterRace = -1;
         else afterRace = Math.min(afterRace, this.getActualRaceCount()-1);
-        return this.driverPlacementsCache.get(afterRace+1)!;
+        return this.driverPlacementsCache.get(afterRace)!;
     }
     getPlacementPointsForDriver(driver: DriverData, afterRace?: number): PlacementPoints<DriverData> {
         return this.getPlacementPointDrivers(afterRace).find(e=>e.owner==driver)!;
