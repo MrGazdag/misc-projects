@@ -206,8 +206,8 @@ void main()
 {
     float modeTime = modeTime(5);
 
-    float fadeInStartMin = 1.0;
-    float fadeInStartMax = 1.7;
+    float fadeInStartMin = 1.5;
+    float fadeInStartMax = 2.1;
     float fadeInStartDuration = 0.4;
     float fadeInStart = fadeInStartMin + ((fadeInStartMax-fadeInStartMin-fadeInStartDuration) / position.y) * position.x;
     float fadeInEnd = fadeInStart + fadeInStartDuration;

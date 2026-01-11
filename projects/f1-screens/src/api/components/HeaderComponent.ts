@@ -88,8 +88,8 @@ export default class HeaderComponent extends AbstractComponent {
 
             corner: 0,
             texture: titleTexture,
-            textureDelta: 2,
-            textureDuration: 2,
+            textureDelta: context.mode.getChangeDuration(),
+            textureDuration: context.mode.getChangeDuration(),
         });
 
         // Bottom left: Page title

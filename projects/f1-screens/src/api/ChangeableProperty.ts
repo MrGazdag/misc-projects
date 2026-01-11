@@ -35,6 +35,12 @@ export default class ChangeableProperty<T> {
         return this.changeDuration;
     }
 
+    getActiveValue() {
+        let a = this.getDelta() / this.getChangeDuration();
+        if (a > 0.5) return this.current;
+        return this.last;
+    }
+
     getDelta() {
         return Utils.clamp(ChangeableProperty.now - this.changeTime, 0, this.changeDuration);
     }

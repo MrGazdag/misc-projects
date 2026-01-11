@@ -14,7 +14,7 @@ void main() {
     CornerPos = zeroToOne;
 
     float modeTime = modeTimeNZ();
-    float barAlpha = cubicInOut(timed(modeTime, 1., 2.));
+    float barAlpha = cubicInOut(timed(modeTime, 1.5, 2.5));
 
     vec2 centerPos = vec2(0.,1. - (GLOBAL_MARGIN.y + HEADER_HEIGHT + HEADER_LINE_MARGIN) / iResolution.y * 2.);
 

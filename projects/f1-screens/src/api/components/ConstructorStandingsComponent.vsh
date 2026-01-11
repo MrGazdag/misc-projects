@@ -14,14 +14,14 @@ out vec2 boxSize;
 #include "./utils/utils.glsl"
 
 float fadeInModeTime() {
-    return modeTime(5);
+    return modeTime(3);
 }
 
 void main() {
     vec2 zeroToOne = CornerPosition/2. + 0.5;
     CornerPos = zeroToOne;
 
-    float modeTime = modeTime(5);
+    float modeTime = modeTime(3);
 
     vec2 centerAreaTopCenterPos = vec2(
     0.5,

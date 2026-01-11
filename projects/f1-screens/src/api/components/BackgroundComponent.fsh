@@ -21,7 +21,7 @@ float circleNoise(vec2 p, float t, float dist) {
 
 vec4 background() {
     float modeTime = modeTimeNZ();
-    float bgAlpha = cubicOut(timed(modeTime, 0., 0.4));
+    float bgAlpha = cubicInOut(timed(modeTime, 0., 1.0));
 
     return vec4(vec3(BG_COLOR)/255.,bgAlpha);
 }
@@ -46,7 +46,7 @@ vec4 circles(vec2 fragCoord) {
     vec3 pickedColor = baseColor;
 
     float modeTime = modeTimeNZ();
-    float alpha = cubicOut(timed(modeTime, 0.4, 0.8));
+    float alpha = cubicOut(timed(modeTime, 1.0, 1.4));
 
     //float cursorDistance = 1.-clamp(length(fragCoord-cursor)/100., 0., 1.);
     //pickedColor = mix(pickedColor,vec3(1,0,0), cursorDistance);
@@ -58,8 +58,8 @@ const float[] widths = float[3](110.,  300.,  209.);
 const float widthTotal =       (110. + 300. + 209.) * wMult;
 vec4 rects(vec2 fragCoord) {
     float modeTime = modeTimeNZ();
-    float overlayAlpha = cubicOut(timed(modeTime, 0., 0.4));
-    float rectsOpenAlpha = cubicOut(timed(modeTime, 0.4, 2.));
+    float overlayAlpha = cubicOut(timed(modeTime, 0., 1.0));
+    float rectsOpenAlpha = cubicOut(timed(modeTime, 1.0, 2.6));
     float rectsPushAlpha = sineInOut(iMode.z/iMode.w);
 
     mat2 skew = mat2(1, -1, 0, 1);

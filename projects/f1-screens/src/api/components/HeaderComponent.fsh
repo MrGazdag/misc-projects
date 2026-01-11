@@ -17,16 +17,18 @@ uniform float textureDuration;
 
 vec4 image(vec2 fragCoord) {
     float modeTime = modeTimeNZ();
-    float hideAlpha = cubicInOut(timed(modeTime, 1., 2.));
+    float hideAlpha = cubicInOut(timed(modeTime, 1.5, 2.5));
 
-    float textureAlpha = (1. - cubicIn(timed(textureDelta, 0., 1.)))
-                       + cubicOut(timed(textureDelta, 1., 2.));
+    float animProgress = textureDelta/textureDuration;
+
+    float textureAlpha = (1. - cubicIn(timed(animProgress, 0., 0.5)))
+                       + cubicOut(timed(animProgress, 0.5, 1.));
 
     float alpha = min(hideAlpha, textureAlpha);
 
     vec4 texel;
     vec2 size;
-    if ((textureDelta/textureDuration) < 0.5) {
+    if (animProgress < 0.5) {
         texel = texture(textureFrom, fragCoord);
         size = vec2(textureSize(textureFrom, 0));
     } else {

@@ -20,8 +20,9 @@ void main() {
     vec2 zeroToOne = CornerPosition/2. + 0.5;
     CornerPos = zeroToOne;
 
-    float d = textureDelta / textureDuration;
-    vec2 txSize = vec2(d < 0.5 ? textureSize(textureFrom, 0).xy : textureSize(textureTo, 0).xy);
+    float animProgress = textureDelta/textureDuration;
+
+    vec2 txSize = vec2(animProgress < 0.5 ? textureSize(textureFrom, 0).xy : textureSize(textureTo, 0).xy);
     txSize /= iResolution; // Into 0 -> 1
     txSize /= 2.; // Into -1 -> 1
 

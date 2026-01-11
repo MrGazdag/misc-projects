@@ -19,11 +19,22 @@ uniform sampler2D positionTex;
 #include "./utils/utils.glsl"
 
 float fadeInModeTime() {
-    return modeTime(1);
+    return modeTime(3);
 }
 
-vec4 bg(vec2 pos) {
-    return vec4(vec3(100,100.,100.)/255., 0.15);
+vec4 bg(vec2 size, vec2 pos, float anim) {
+    if (pos.x > anim*size.x) return vec4(0.);
+
+    vec2 c = pos/size.y;
+    if (c.x-c.y < -0.75) return vec4(0.);
+    //return vec4(vec3(100,100.,100.)/255., 0.15);
+    return vec4(vec3(255,100.,100.)/255., 0.75);
+}
+vec4 positionBox(vec2 size, vec2 pos, float anim) {
+    vec2 c = pos/size.y;
+    if (pos.x > size.x) return vec4(0.);
+    if (abs(c.x-c.y) >= anim*0.75) return vec4(0.);
+    return vec4(vec3(200., 200., 200.)/255.,1.);
 }
 vec4 drawImage(float heightOffset, float height, vec2 pos) {
     vec2 center = vec2(boxSize.x/2., boxSize.y-heightOffset);
@@ -68,10 +79,6 @@ vec4 drawPosition(float heightOffset, vec2 size, vec2 pos) {
 }
 void main()
 {
-    if (1 == 1) {
-        fragColor = vec4(1,0,0,1);
-        return;
-    }
     float modeTime = fadeInModeTime();
     float fadeInAlpha = cubicInOut(timed(modeTime, 1., 2.));
     float barAlpha = (1. - cubicInOut(timed(iRaceIndex.z, 0., 1.)))
@@ -80,8 +87,10 @@ void main()
 
     vec2 pos = CornerPos * boxSize;
 
-    fragColor = bg(pos);
+    fragColor = bg(boxSize, pos, cubicOut(timed(modeTime, 1.2, 1.6)));
+    fragColor = alphaMix(fragColor, positionBox(vec2(boxSize.y), pos, cubicOut(timed(modeTime, 1.0, 1.2))));
 
+    /*
     float offset = PODIUM_PADDING.y;
     vec2 size = vec2(0., PODIUM_IMAGE_HEIGHT);
     fragColor = alphaMix(fragColor, drawImage(offset+size.y/2., size.y, pos));
@@ -100,4 +109,5 @@ void main()
     fragColor = alphaMix(fragColor, drawPosition(offset+size.y/2., size, pos));
 
     fragColor.a *= alpha;
+    */
 }
