@@ -13,6 +13,12 @@ float fromToInterpEq(vec4 data, int target) {
     if (toOne) return data.z;
     else return data.w-data.z;
 }
+bool fromToInterpEqIsBackwards(vec4 data, int target) {
+    bool fromOne = inteq(data.x, target);
+    bool toOne = inteq(data.y, target);
+
+    return fromOne && !toOne;
+}
 float fromToInterpLtEq(vec4 data, int target) {
     bool fromOne = intlteq(data.x, target);
     bool toOne = intlteq(data.y, target);

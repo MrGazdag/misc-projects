@@ -1,0 +1,192 @@
+import {GLProgram, GLRenderer, GLTexture} from "@mrgazdag/gl-lite";
+import constructorVsh from "./ConstructorStandingsComponent.vsh";
+import constructorFsh from "./ConstructorStandingsComponent.fsh";
+import AbstractComponent from "./AbstractComponent";
+import {ComponentContext} from "../F1Renderer";
+import TextureUtils from "../TextRenderer";
+import ChangeableProperty from "../ChangeableProperty";
+import TeamData from "../data/TeamData";
+
+export default class RaceResultsComponent extends AbstractComponent {
+    private textureCacheMap = new Map<string,GLTexture>();
+    private program!: GLProgram<InterpolatedImageProps>;
+
+    private currentRace: number = -1;
+    private teamData!: TeamEntry[];
+
+    shouldRender(context: ComponentContext): boolean {
+        return context.mode.checkValue(e=>e==3);
+    }
+
+    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
+        if (this.textureCacheMap.has(key)) {
+            return this.textureCacheMap.get(key)!;
+        }
+        let result = renderer.texture({
+            data: value,
+
+            width: value.width,
+            height: value.height,
+            format: "rgba",
+            flipY: true,
+        });
+        this.textureCacheMap.set(key, result);
+        return result!;
+    }
+    private getTextTexture(renderer: GLRenderer, key: string, value: string, bold: boolean) {
+        if (this.textureCacheMap.has(key)) {
+            return this.textureCacheMap.get(key)!;
+        }
+        const font = {family: "Formula1",size:"60px",weight: bold ? "bold" : "normal"};
+        let result = TextureUtils.updateOrNew(renderer, undefined, TextureUtils.renderText(font, value));
+        this.textureCacheMap.set(key, result);
+        return result!;
+    }
+    private getTextTextureDiff(renderer: GLRenderer, key: string, value: string, diff: number, bold: boolean) {
+        if (this.textureCacheMap.has(key)) {
+            return this.textureCacheMap.get(key)!;
+        }
+        const font = {family: "Formula1",size:"60px",weight: bold ? "bold" : "normal"};
+        let result = TextureUtils.updateOrNew(renderer, undefined, TextureUtils.renderTextWithDiff(font, value, diff));
+        this.textureCacheMap.set(key, result);
+        return result!;
+    }
+
+    init(renderer: GLRenderer, context: ComponentContext): void {
+        // Create a shader program
+        this.program = this.createRect<InterpolatedImageProps>(renderer, context, {
+            vert: constructorVsh,
+            frag: constructorFsh,
+            uniforms: {
+                iTime: props => props.time,
+                iResolution: props => props.screen,
+                iMode: props=>props.mode,
+                iRaceIndex: props => props.raceIndex,
+
+                position: props => props.data.positionValue.asVec4(),
+                entryCount: props => props.entryCount,
+
+                positionTx: props => props.data.positionTx,
+                iconTx: props => props.data.iconTx,
+                nameTx: props => props.data.nameTx,
+                pointsTxOld: props => props.data.pointsTxOld,
+                pointsTxNew: props => props.data.pointsTxNew,
+                pointsDiffTxOld: props => props.data.pointsDiffTxOld,
+                pointsDiffTxNew: props => props.data.pointsDiffTxNew,
+                pointsValue: props => props.data.pointsValue.asVec4(),
+            },
+        });
+
+        this.teamData = [];
+        for (let team of context.gameData.getAllTeams()) {
+            this.teamData.push({
+                team: team,
+                positionValue: context.raceIndex.createDerived((raceIndex,prev)=>{
+                    return context.gameData.getPlacementPointTeams(raceIndex).findIndex(t => t.owner == team);
+                }),
+                positionTx: null!,
+                nameTx: null!,
+                iconTx: null!,
+                pointsTxOld: null!,
+                pointsTxNew: null!,
+                pointsDiffTxOld: null!,
+                pointsDiffTxNew: null!,
+
+                pointsValue: context.raceIndex.createDerived((raceIndex,prev)=>{
+                    return context.gameData.getPlacementPointTeams(raceIndex).find(t => t.owner == team)!.points;
+                }),
+            });
+        }
+
+        this.currentRace = -2;
+        this.updateRace(renderer, context);
+    }
+    private getDiffedPos(context: ComponentContext, team: TeamData, raceIndex: number) {
+        if (raceIndex == 0) return 0;
+
+        let lastPoints = context.gameData.getPlacementPointTeams(raceIndex-1);
+        let points = context.gameData.getPlacementPointTeams(raceIndex);
+
+        let lastPos = lastPoints.findIndex(t => t.owner == team);
+        let pos = points.findIndex(t => t.owner == team);
+
+        return lastPos - pos;
+    }
+    private updateRace(renderer: GLRenderer, context: ComponentContext) {
+        let race = context.raceIndex.getActiveValue();
+
+        let lastPoints = context.gameData.getPlacementPointTeams(context.raceIndex.getLastValue());
+        let points = context.gameData.getPlacementPointTeams(context.raceIndex.getCurrentValue());
+        // Always update this eagerly
+        for (let team of this.teamData) {
+            let lastPos = lastPoints.findIndex(t => t.owner == team.team);
+            let lastPointData = lastPoints[lastPos];
+            let lastPointDiff = this.getDiffedPos(context, team.team, context.raceIndex.getLastValue());
+
+            let pos = points.findIndex(t => t.owner == team.team);
+            let pointData = points[pos];
+            let pointDiff = this.getDiffedPos(context, team.team, context.raceIndex.getCurrentValue());
+
+            team.pointsTxOld = this.getTextTexture(renderer, "points_" + lastPointData.points, lastPointData.points+"", true);
+            team.pointsTxNew = this.getTextTexture(renderer, "points_" + pointData.points, pointData.points+"", true);
+            team.pointsDiffTxOld = this.getTextTextureDiff(renderer, "diff_" + lastPointDiff, "", lastPointDiff, false);
+            team.pointsDiffTxNew = this.getTextTextureDiff(renderer, "diff_" + pointDiff, "", pointDiff, false);
+        }
+
+        if (race == this.currentRace) return;
+        this.currentRace = race;
+
+        // Only update the rest when it actually changed
+        for (let team of this.teamData) {
+            let pos = points.findIndex(t => t.owner == team.team);
+
+            team.positionTx = this.getTextTexture(renderer, "pos_" + pos, (pos+1)+"", false);
+            team.iconTx = this.getImageTexture(renderer, "team_icon_" + team.team.getId(), team.team.getIcon());
+            team.nameTx = this.getTextTexture(renderer, "team_name_" + team.team.getId(), team.team.getName(), true);
+        }
+    }
+    render(renderer: GLRenderer, context: ComponentContext): void {
+        this.updateRace(renderer, context);
+        for (let i = 0; i < this.teamData.length; i++){
+            let raceData = this.teamData[i];
+            this.program.draw({
+                time: context.time.delta,
+                screen: context.screen,
+                mode: context.mode.asVec4(),
+                raceIndex: context.raceIndex.asVec4(),
+
+                entryCount: this.teamData.length,
+                data: raceData
+            });
+        }
+    }
+
+    dispose() {
+        this.program.dispose();
+        for (let texture of this.textureCacheMap.values()) {
+            texture.dispose();
+        }
+        this.textureCacheMap.clear();
+    }
+}
+interface InterpolatedImageProps {
+    time: number;
+    screen: [number, number];
+    mode: [number, number, number, number];
+    raceIndex: [number, number, number, number]
+
+    entryCount: number;
+    data: TeamEntry
+}
+interface TeamEntry {
+    team: TeamData,
+    positionValue: ChangeableProperty<number>,
+    positionTx: GLTexture,
+    iconTx: GLTexture,
+    nameTx: GLTexture,
+    pointsTxOld: GLTexture,
+    pointsTxNew: GLTexture,
+    pointsDiffTxOld: GLTexture,
+    pointsDiffTxNew: GLTexture,
+    pointsValue: ChangeableProperty<number>;
+}

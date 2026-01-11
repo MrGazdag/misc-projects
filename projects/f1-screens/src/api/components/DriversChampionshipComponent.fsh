@@ -118,7 +118,7 @@ void main() {
     float alpha = min(1., barAlpha);
 
     float fadeInStartRange = 0.3;
-    modeTime -= ((fadeInStartRange) / entryCount) * position.y;
+    modeTime -= ((fadeInStartRange) / entryCount) * (fromToInterpEqIsBackwards(iMode, 4) ? entryCount-1.-position.y : position.y);
     modeTime = max(modeTime, 0.);
 
     vec2 pos = CornerPos * boxSize;
