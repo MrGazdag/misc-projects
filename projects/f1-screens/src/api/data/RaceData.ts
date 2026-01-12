@@ -114,7 +114,7 @@ export default class RaceData {
     }
 
     getDriverData(driver: DriverData) {
-        if (this.driverMap == null) return null;
+        if (this.driverMap == null) return undefined;
         return this.driverMap.get(driver);
     }
 
@@ -145,7 +145,7 @@ export interface RaceDriverData {
 
     time: number | null,
     timeType: "finish" | "from_leader" | "lapped" | "none" | "did_not_finish" | "did_not_start" | "disqualified",
-    penaltyTime: number,
+    penaltyTime: number | null,
 }
 const Priority = {
     "finish": 1,

@@ -24,7 +24,7 @@ export interface RawRaceResultsData {
 
         time: number | null,
         timeType: "finish" | "from_leader" | "lapped" | "did_not_finish" | "did_not_start" | "disqualified",
-        penaltyTime: number
+        penaltyTime: number | null
     }[]
 }
 export interface RawTeamData {
