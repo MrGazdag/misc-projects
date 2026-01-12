@@ -75,6 +75,7 @@ export default class App extends Component<AppProps, AppState> {
             let heightRef = React.createRef<HTMLInputElement>();
             let fpsRef = React.createRef<HTMLInputElement>();
             let durationRef = React.createRef<HTMLInputElement>();
+            let targetRef = React.createRef<HTMLSelectElement>();
             overlay = <div className="_overlay record">
                 <label style={{backgroundColor: "white",padding: "10px"}}>Width (pixels)</label>
                 <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={widthRef} step={1} placeholder="Width" defaultValue="1080"/>
@@ -84,18 +85,43 @@ export default class App extends Component<AppProps, AppState> {
                 <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={fpsRef} placeholder="FPS" defaultValue="60"/>
                 <label style={{backgroundColor: "white",padding: "10px"}}>Duration (Seconds)</label>
                 <input style={{marginBottom: "20px",padding: "10px"}} type="number" ref={durationRef} placeholder="Duration" defaultValue="20"/>
-                <button onClick={()=>{
+                <label style={{backgroundColor: "white",padding: "10px"}}>Target</label>
+                <select ref={targetRef} style={{marginBottom: "20px", padding: "10px"}} defaultValue="mp4-webcodecs">
+                    <option value="zip">Zip</option>
+                    <option value="mp4-ffmpeg">MP4 - FFmpeg</option>
+                    <option value="mp4-webcodecs">MP4 - WebCodecs</option>
+                    <option value="imgur">Imgur</option>
+                </select>
+
+                <button onClick={() => {
                     this.recording = {
                         width: 1080,
                         height: 1080,
                         seconds: durationRef.current!.valueAsNumber,
-                        fps: fpsRef.current!.valueAsNumber
+                        fps: fpsRef.current!.valueAsNumber,
+                        target: targetRef.current!.value as RecordOptions["target"],
                     };
                 }} disabled={this.props.app.isRecording()}>Record</button>
-                {recordResult == null ? null : <div>
-                    <h2>Result</h2>
-                    {recordResult.type == "download" ? <a href={recordResult.url} download={recordResult.name}>Download</a> : <video style={{height: "200px"}} src={recordResult.url} autoPlay muted loop></video>}
-                </div>}
+                {recordResult == null
+                    ? null
+                    : <div>
+                        <h2>Result</h2>
+                        {(()=>{
+                            switch (recordResult.type) {
+                                case "error":
+                                    return <code style={{
+                                        backgroundColor: "#f88d",
+                                        color: "black",
+                                        whiteSpace: "pre",
+                                    }}>{recordResult.message}</code>;
+                                case "download":
+                                    return <a href={recordResult.url} download={recordResult.name}>Download</a>;
+                                case "video":
+                                    return <video style={{height: "200px"}} src={recordResult.url} autoPlay muted
+                                                  loop></video>;
+                            }
+                        })()}
+                    </div>}
             </div>;
         } else if (this.state.tabOpen == "data") {
             overlay = <div className="_overlay data">

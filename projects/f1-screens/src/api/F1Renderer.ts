@@ -15,6 +15,9 @@ import {FFmpeg} from "@ffmpeg/ffmpeg";
 import {toBlobURL} from "@ffmpeg/util";
 import FFmpegMP4Exporter from "./exporter/FFmpegMP4Exporter";
 import WebCodecsMP4Exporter from "./exporter/WebCodecsMP4Exporter";
+import Exporter from "./exporter/Exporter";
+import ZipExporter from "./exporter/ZipExporter";
+import ImgurExporter from "./exporter/ImgurExporter";
 
 export default class F1Renderer {
     private static timeMultiplier = 1;
@@ -92,7 +95,23 @@ export default class F1Renderer {
 
         this.recording = true;
         try {
-            let exporter = new WebCodecsMP4Exporter();
+            let exporter: Exporter;
+            switch (options.target) {
+                case "zip":
+                    exporter = new ZipExporter();
+                    break;
+                case "mp4-ffmpeg":
+                    exporter = new FFmpegMP4Exporter();
+                    break;
+                case "mp4-webcodecs":
+                    exporter = new WebCodecsMP4Exporter();
+                    break;
+                case "imgur":
+                    exporter = new ImgurExporter();
+                    break;
+                default:
+                    throw new Error("Unknown recording target: " + options.target);
+            }
             await exporter.setup(options);
 
             let start = 0;
@@ -114,6 +133,8 @@ export default class F1Renderer {
             }
 
             this.recordResult = await exporter.complete();
+        } catch(e) {
+            this.recordResult = {type: "error", message: (e instanceof Error ? e.stack! : e+"")};
         } finally {
             this.recording = false;
             this.reset();
@@ -238,9 +259,13 @@ export interface RecordOptions {
     height: number,
     fps: number,
     seconds: number
+    target: "zip" | "mp4-webcodecs" | "mp4-ffmpeg" | "imgur",
 }
-export interface RecordResults {
+export type RecordResults = {
     type: "download" | "video"
     url: string,
     name: string,
+} | {
+    type: "error",
+    message: string,
 }

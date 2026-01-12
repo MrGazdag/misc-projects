@@ -91,13 +91,17 @@ export default class WebCodecsMP4Exporter extends Exporter {
         this.encoder.encode(frame, {keyFrame: keyFrame});
         frame.close();
     }
-    public async complete(): Promise<RecordResults> {
+    protected async exportAsBlob() {
+
         await this.encoder.flush();
         this.encoder.close();
 
         this.muxer.finalize();
 
-        let blob = new Blob([this.muxer.target.buffer], {type: "video/mp4"});
+        return new Blob([this.muxer.target.buffer], {type: "video/mp4"});
+    }
+    public async complete(): Promise<RecordResults> {
+        let blob = await this.exportAsBlob();
         let url = URL.createObjectURL(blob);
         return {
             type: "video",
