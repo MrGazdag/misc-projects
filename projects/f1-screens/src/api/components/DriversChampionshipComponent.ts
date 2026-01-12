@@ -1,6 +1,6 @@
 import {GLProgram, GLRenderer, GLTexture} from "@mrgazdag/gl-lite";
-import constructorVsh from "./DriversChampionshipComponent.vsh";
-import constructorFsh from "./DriversChampionshipComponent.fsh";
+import driversChampionshipVsh from "./DriversChampionshipComponent.vsh";
+import driversChampionshipFsh from "./DriversChampionshipComponent.fsh";
 import AbstractComponent from "./AbstractComponent";
 import {ComponentContext} from "../F1Renderer";
 import TextureUtils from "../TextRenderer";
@@ -56,8 +56,8 @@ export default class DriversChampionshipComponent extends AbstractComponent {
     init(renderer: GLRenderer, context: ComponentContext): void {
         // Create a shader program
         this.program = this.createRect<InterpolatedImageProps>(renderer, context, {
-            vert: constructorVsh,
-            frag: constructorFsh,
+            vert: driversChampionshipVsh,
+            frag: driversChampionshipFsh,
             uniforms: {
                 iTime: props => props.time,
                 iResolution: props => props.screen,

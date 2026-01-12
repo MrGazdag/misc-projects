@@ -18,6 +18,7 @@ import WebCodecsMP4Exporter from "./exporter/WebCodecsMP4Exporter";
 import Exporter from "./exporter/Exporter";
 import ZipExporter from "./exporter/ZipExporter";
 import ImgurExporter from "./exporter/ImgurExporter";
+import RaceResultsComponent from "./components/RaceResultsComponent";
 
 export default class F1Renderer {
     private static timeMultiplier = 1;
@@ -49,8 +50,8 @@ export default class F1Renderer {
         this.startTime = (Date.now()/1000) * F1Renderer.timeMultiplier;
         this.initData = undefined;
 
-        this.mode = new ChangeableProperty(5, 3);
-        this.raceIndex = new ChangeableProperty(-1, 2);
+        this.mode = new ChangeableProperty(2, 3);
+        this.raceIndex = new ChangeableProperty(0, 2);
 
         this.recording = false;
         this.recordResult = undefined;
@@ -61,6 +62,7 @@ export default class F1Renderer {
             new HeaderLineComponent(),
 
             new PodiumComponent(),
+            new RaceResultsComponent(),
             new ConstructorStandingsComponent(),
             new DriversChampionshipComponent(),
             new CalendarComponent(),
