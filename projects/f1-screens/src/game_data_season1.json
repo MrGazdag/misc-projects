@@ -227,7 +227,7 @@
                         "numberOfPitStops": 2,
                         "bestLapTime": 92.775,
                         "time": 108.22,
-                        "timeType": "",
+                        "timeType": "from_leader",
                         "penaltyTime": 10
                     },
                     {
