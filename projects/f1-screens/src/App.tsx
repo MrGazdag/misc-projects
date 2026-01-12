@@ -95,8 +95,8 @@ export default class App extends Component<AppProps, AppState> {
 
                 <button onClick={() => {
                     this.recording = {
-                        width: 1080,
-                        height: 1080,
+                        width: widthRef.current!.valueAsNumber,
+                        height: heightRef.current!.valueAsNumber,
                         seconds: durationRef.current!.valueAsNumber,
                         fps: fpsRef.current!.valueAsNumber,
                         target: targetRef.current!.value as RecordOptions["target"],
