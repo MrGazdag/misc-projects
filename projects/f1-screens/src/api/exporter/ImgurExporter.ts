@@ -19,7 +19,7 @@ export default class ImgurExporter extends WebCodecsMP4Exporter {
 
         while (true) {
             let status = await (await fetch(`https://api.imgur.com/media/v1/media/${id}/status?client_id=d70305e7c3ac5c6`)).json();
-            if (status.status !== "started") break;
+            if (status.state !== "started") break;
             await new Promise(r=>setTimeout(r, 2000));
         }
 
