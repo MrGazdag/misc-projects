@@ -412,6 +412,7 @@
                     },
                     {
                         "playerId": "kipsy",
+                        "teamId": "aston_martin",
                         "startingPosition": null,
                         "numberOfPitStops": null,
                         "bestLapTime": null,
