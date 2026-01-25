@@ -69,13 +69,18 @@ export default class RaceData {
 
             let team = gameData.getTeam(driverData.teamId);
             if (team == null) throw new Error(`Race ${JSON.stringify(this.data.map)}'s driver ${JSON.stringify(driverData.playerId)} has missing team: ${JSON.stringify(driverData.teamId)}`);
+            
+            let points = gameData.getPointForPosition(pos);
+            if (driverData.timeType == "did_not_start" || driverData.timeType == "disqualified") {
+                points = 0;
+            }
             this.driverMap.set(driver!, {
                 driver: driver,
                 team: team,
 
                 startingPosition: driverData.startingPosition,
                 finishingPosition: pos,
-                points: gameData.getPointForPosition(pos),
+                points: points,
 
                 numberOfPitStops: driverData.numberOfPitStops,
                 bestLapTime: driverData.bestLapTime,
