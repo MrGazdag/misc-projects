@@ -23,7 +23,7 @@ export interface RawRaceResultsData {
         bestLapTime: number | null,
 
         time: number | null,
-        timeType: "finish" | "from_leader" | "lapped" | "did_not_finish" | "did_not_start" | "disqualified",
+        timeType: "finish" | "from_leader" | "lapped" | "did_not_finish" | "did_not_finish_no_points" | "did_not_start" | "disqualified",
         penaltyTime: number | null
     }[]
 }

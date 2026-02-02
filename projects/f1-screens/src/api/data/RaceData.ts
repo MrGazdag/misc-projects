@@ -71,7 +71,13 @@ export default class RaceData {
             if (team == null) throw new Error(`Race ${JSON.stringify(this.data.map)}'s driver ${JSON.stringify(driverData.playerId)} has missing team: ${JSON.stringify(driverData.teamId)}`);
             
             let points = gameData.getPointForPosition(pos);
-            if (driverData.timeType == "did_not_start" || driverData.timeType == "disqualified") {
+
+            let noPointsCategories = [
+                "did_not_start",
+                "disqualified",
+                "did_not_finish_no_points"
+            ];
+            if (noPointsCategories.includes(driverData.timeType)) {
                 points = 0;
             }
             this.driverMap.set(driver!, {
@@ -149,7 +155,7 @@ export interface RaceDriverData {
     isBestLapTimeOverall: boolean,
 
     time: number | null,
-    timeType: "finish" | "from_leader" | "lapped" | "none" | "did_not_finish" | "did_not_start" | "disqualified",
+    timeType: "finish" | "from_leader" | "lapped" | "none" | "did_not_finish" | "did_not_finish_no_points" | "did_not_start" | "disqualified",
     penaltyTime: number | null,
 }
 const Priority = {
@@ -158,6 +164,7 @@ const Priority = {
     "lapped": 3,
     "none": 4,
     "did_not_finish": 5,
-    "did_not_start": 6,
-    "disqualified": 7,
+    "did_not_finish_no_points": 6,
+    "did_not_start": 7,
+    "disqualified": 8,
 } satisfies Record<RaceDriverData["timeType"], number>

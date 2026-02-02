@@ -694,7 +694,7 @@
                         "numberOfPitStops": 2,
                         "bestLapTime": 96.804,
                         "time": null,
-                        "timeType": "did_not_finish",
+                        "timeType": "did_not_finish_no_points",
                         "penaltyTime": 6
                     },
                     {

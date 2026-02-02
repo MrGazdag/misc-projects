@@ -107,6 +107,7 @@
                                     "from_leader",
                                     "lapped",
                                     "did_not_finish",
+                                    "did_not_finish_no_points",
                                     "did_not_start",
                                     "disqualified"
                                 ]

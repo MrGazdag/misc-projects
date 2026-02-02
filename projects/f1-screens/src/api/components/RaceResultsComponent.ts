@@ -248,6 +248,7 @@ export default class RaceResultsComponent extends AbstractComponent {
                 case "none":
                     break;
                 case "did_not_finish":
+                case "did_not_finish_no_points":
                     special = "DNF";
                     break;
                 case "did_not_start":
