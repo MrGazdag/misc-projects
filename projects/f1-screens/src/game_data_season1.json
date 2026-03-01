@@ -1095,7 +1095,160 @@
             "mapFlag": "nl",
             "lapCount": 36,
             "date": "2026-02-21T19:00:00.000Z",
-            "results": null
+            "results": {
+                "driverData": [
+                    {
+                        "playerId": "tim",
+                        "teamId": "mercedes",
+                        "startingPosition": 2,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 71.441,
+                        "time": 2803.980,
+                        "timeType": "finish",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "shawty",
+                        "teamId": "sauber",
+                        "startingPosition": 8,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 71.078,
+                        "time": 1.108,
+                        "timeType": "from_leader",
+                        "penaltyTime": 10
+                    },
+                    {
+                        "playerId": "robbycalzone",
+                        "teamId": "mclaren",
+                        "startingPosition": 1,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 71.432,
+                        "time": 15.25,
+                        "timeType": "from_leader",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "zomboja",
+                        "teamId": "ferrari",
+                        "startingPosition": 4,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 73.17,
+                        "time": 44.512,
+                        "timeType": "from_leader",
+                        "penaltyTime": 6
+                    },
+                    {
+                        "playerId": "providence",
+                        "teamId": "racing_bulls",
+                        "startingPosition": 5,
+                        "numberOfPitStops": 3,
+                        "bestLapTime": 75.034,
+                        "time": 1,
+                        "timeType": "lapped",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "derrock",
+                        "teamId": "mercedes",
+                        "startingPosition": 4,
+                        "numberOfPitStops": 4,
+                        "bestLapTime": 73.820,
+                        "time": 1,
+                        "timeType": "lapped",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "beni",
+                        "teamId": "aston_martin",
+                        "startingPosition": 6,
+                        "numberOfPitStops": 4,
+                        "bestLapTime": 72.826,
+                        "time": null,
+                        "timeType": "did_not_finish",
+                        "penaltyTime": 20
+                    },
+                    {
+                        "playerId": "tyroion",
+                        "teamId": "sauber",
+                        "startingPosition": 7,
+                        "numberOfPitStops": 3,
+                        "bestLapTime": 76.31,
+                        "time": null,
+                        "timeType": "did_not_finish",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "adam",
+                        "teamId": "redbull",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "meise",
+                        "teamId": "williams",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "kipsy",
+                        "teamId": "aston_martin",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "knayz",
+                        "teamId": "williams",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "patat",
+                        "teamId": "mclaren",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "mrbryan",
+                        "teamId": "ferrari",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "adre",
+                        "teamId": "redbull",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    }
+                ]
+            }
         },
         {
             "map": "Monza",
