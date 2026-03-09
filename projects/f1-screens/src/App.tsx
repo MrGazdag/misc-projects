@@ -36,7 +36,7 @@ export default class App extends Component<AppProps, AppState> {
             }
             // Manage animation
             const keys = "0123456789";
-            const raceKeys = "qwertzuiop";
+            const raceKeys = "qwertzuiopasdfghjkl";
             for (let key of keys) {
                 if (e.key == key) {
                     this.props.app.getMode().setValue(parseInt(key));
