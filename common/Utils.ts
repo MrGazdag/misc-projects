@@ -63,4 +63,12 @@ export default class Utils {
     static clamp(value: number, min: number, max: number) {
         return Math.min(Math.max(value, min), max);
     }
+
+    public static centerFillText(ctx: CanvasRenderingContext2D, x: number, y: number, text: string) {
+        ctx.textBaseline = "middle";
+        let measure = ctx.measureText(text);
+        let width = measure.width;
+        let height = measure.actualBoundingBoxAscent+measure.actualBoundingBoxDescent;
+        ctx.fillText(text, x-width/2, y);
+    }
 }

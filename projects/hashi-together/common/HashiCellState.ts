@@ -1,0 +1,27 @@
+enum HashiCellState {
+    BRIDGE_VERTICAL = -4,
+    BRIDGE_VERTICAL_DOUBLE,
+    BRIDGE_HORIZONTAL,
+    BRIDGE_HORIZONTAL_DOUBLE,
+
+    EMPTY,
+
+    CELL_1,
+    CELL_2,
+    CELL_3,
+    CELL_4,
+    CELL_5,
+    CELL_6,
+    CELL_7,
+    CELL_8,
+
+    CELL_1_CROSSED,
+    CELL_2_CROSSED,
+    CELL_3_CROSSED,
+    CELL_4_CROSSED,
+    CELL_5_CROSSED,
+    CELL_6_CROSSED,
+    CELL_7_CROSSED,
+    CELL_8_CROSSED,
+}
+export default HashiCellState;
