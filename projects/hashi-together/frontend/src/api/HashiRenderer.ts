@@ -110,8 +110,8 @@ export default class HashiRenderer {
                 Utils.centerFillText(ctx, centerX, centerY, state+"");
                 if (wasCrossedOut) {
                     ctx.beginPath();
-                    ctx.moveTo(centerX-cW*0.4, centerY+cH*0.4);
-                    ctx.lineTo(centerX+cW*0.4, centerY-cH*0.4);
+                    ctx.moveTo(centerX-cW*0.5, centerY+cH*0.5);
+                    ctx.lineTo(centerX+cW*0.5, centerY-cH*0.5);
 
                     ctx.lineWidth = 5;
                     ctx.strokeStyle = '#000';
@@ -140,14 +140,14 @@ export default class HashiRenderer {
 
         let mapSize = this.map.getMapSize();
 
-        let cW = w / (mapSize+1);
-        let cH = h / (mapSize+1);
+        let cW = w / (mapSize + 1 + (this.settings.showCoords ? 2 : 0));
+        let cH = h / (mapSize + 1 + (this.settings.showCoords ? 2 : 0));
 
         x /= cW;
         y /= cH;
 
-        x -= 0.5;
-        y -= 0.5;
+        x -= 0.5 + (this.settings.showCoords ? 1 : 0);
+        y -= 0.5 + (this.settings.showCoords ? 1 : 0);
 
         this.map.click(x, y, right);
     }
