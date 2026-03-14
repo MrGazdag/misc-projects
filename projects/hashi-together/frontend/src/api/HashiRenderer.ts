@@ -36,11 +36,15 @@ export default class HashiRenderer {
 
             ctx.fillStyle = "#0003";
             const gridWidth = cW * 0.1;
-            const gridHeight = cW * 0.1;
+            const gridHeight = cH * 0.1;
             ctx.fillRect(centerX - cW/2, centerY - gridHeight/2, cW, gridHeight);
             ctx.fillRect(centerX - gridWidth/2, centerY - cH/2, gridWidth, cH);
 
             if (HashiUtils.isCell(state)) {
+                let wasCrossedOut = HashiUtils.isCrossedCell(state);
+                if (wasCrossedOut) {
+                    state = HashiUtils.toggleCrossedCell(state);
+                }
                 ctx.beginPath();
                 ctx.ellipse(centerX, centerY, cW/2, cH/2, 0, 0, 2 * Math.PI, false)
                 ctx.fillStyle = "#fff";
@@ -52,7 +56,15 @@ export default class HashiRenderer {
                 ctx.fillStyle = "#000";
                 ctx.font = cW*0.75 + "px Arial";
                 Utils.centerFillText(ctx, centerX, centerY, state+"");
-                // TODO crossed out?
+                if (wasCrossedOut) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX-cW*0.4, centerY+cH*0.4);
+                    ctx.lineTo(centerX+cW*0.4, centerY-cH*0.4);
+
+                    ctx.lineWidth = 5;
+                    ctx.strokeStyle = '#000';
+                    ctx.stroke();
+                }
             } else if (HashiUtils.isBridge(state)) {
                 ctx.fillStyle = "#000f";
                 if (state == HashiCellState.BRIDGE_HORIZONTAL) {
@@ -69,5 +81,22 @@ export default class HashiRenderer {
                 }
             }
         }
+    }
+    click(canvas: HTMLCanvasElement, x: number, y: number, right: boolean) {
+        let w = canvas.width;
+        let h = canvas.height;
+
+        let mapSize = this.map.getMapSize();
+
+        let cW = w / (mapSize+1);
+        let cH = h / (mapSize+1);
+
+        x /= cW;
+        y /= cH;
+
+        x -= 0.5;
+        y -= 0.5;
+
+        this.map.click(x, y, right);
     }
 }

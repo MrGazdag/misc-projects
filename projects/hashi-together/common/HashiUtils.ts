@@ -17,11 +17,34 @@ export default class HashiUtils {
         // Low level fuckery
         return state < 0;
     }
+    public static countBridge(state: HashiCellState | undefined): number {
+        switch (state) {
+            case HashiCellState.BRIDGE_VERTICAL:
+            case HashiCellState.BRIDGE_HORIZONTAL:
+                return 1;
+            case HashiCellState.BRIDGE_VERTICAL_DOUBLE:
+            case HashiCellState.BRIDGE_HORIZONTAL_DOUBLE:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+    public static getDesiredBridgeCount(state: HashiCellState) {
+        if (this.isCrossedCell(state)) return this.toggleCrossedCell(state);
+        return state;
+    }
+    public static isVertical(state: HashiCellState) {
+        return state == HashiCellState.BRIDGE_VERTICAL || state == HashiCellState.BRIDGE_VERTICAL_DOUBLE;
+    }
+
+    public static isHorizontal(state: HashiCellState) {
+        return state == HashiCellState.BRIDGE_HORIZONTAL || state == HashiCellState.BRIDGE_HORIZONTAL_DOUBLE;
+    }
 
     public static indexToCoords(index: number, mapSize: number): [number,number] {
-        return [Math.floor(index / mapSize), index % mapSize];
+        return [index % mapSize, Math.floor(index / mapSize)];
     }
     public static coordsToIndex(x: number, y: number, mapSize: number): number {
-        return x * mapSize + y;
+        return y * mapSize + x;
     }
 }

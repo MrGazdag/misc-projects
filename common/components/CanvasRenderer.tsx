@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, MouseEventHandler} from "react";
 import "./CanvasRenderer.scss";
 
 export default class CanvasRenderer extends Component<CanvasRendererProps, CanvasState> {
@@ -23,7 +23,7 @@ export default class CanvasRenderer extends Component<CanvasRendererProps, Canva
         let canvas = this.canvasRef.current!;
         canvas.width = 0;
         canvas.height = 0;
-        
+
         let div = this.canvasDivRef.current!;
         window.getComputedStyle(div).getPropertyValue('width'); // force style recalculation
 
@@ -67,21 +67,32 @@ export default class CanvasRenderer extends Component<CanvasRendererProps, Canva
             <div ref={this.canvasDivRef} className="_canvas">
                 {this.state.lastError ? <code className="_error">{this.state.lastError}</code> : null}
             </div>
-            <canvas ref={this.canvasRef} width="1" height="1"
+            <canvas ref={this.canvasRef}
+                    width="1"
+                    height="1"
                     onPointerDown={e=>{
-                        if (!this.ctx) return;
-                        this.ctx.pointers.set(e.pointerId, e);
-                    }} onPointerUp={e=>{
-                        if (!this.ctx) return;
-                        this.ctx.pointers.delete(e.pointerId);
-                    }} onPointerMove={e=>{
-                        if (!this.ctx) return;
-                        this.ctx.pointers.set(e.pointerId, e);
-            }}></canvas>
+                        if (this.ctx) {
+                            this.ctx.pointers.set(e.pointerId, e);
+                        }
+                        this.props.onPointerDown?.(e);
+                    }}
+                    onPointerUp={e=>{
+                        if (this.ctx) {
+                            this.ctx.pointers.delete(e.pointerId);
+                        }
+                        this.props.onPointerUp?.(e);
+                    }}
+                    onPointerMove={e=>{
+                        if (this.ctx) {
+                            this.ctx.pointers.set(e.pointerId, e);
+                        }
+                        this.props.onPointerMove?.(e);
+                    }}
+                    onClick={this.props.onClick} onContextMenu={this.props.onContextMenu}></canvas>
         </div>;
     }
 }
-type CanvasRendererProps = {
+type CanvasRendererProps = ({
     type?: "2d",
     options?: CanvasRenderingContext2DSettings,
     renderFunc: (ctx: RenderContext<CanvasRenderingContext2D>)=>(void | Promise<void>)
@@ -97,7 +108,13 @@ type CanvasRendererProps = {
     type: "webgl2",
     options?: WebGLContextAttributes,
     renderFunc: (ctx: RenderContext<WebGL2RenderingContext>)=>(void | Promise<void>);
-}
+}) & {
+    onClick?: MouseEventHandler<HTMLCanvasElement>;
+    onContextMenu?: MouseEventHandler<HTMLCanvasElement>;
+    onPointerDown?: MouseEventHandler<HTMLCanvasElement>;
+    onPointerUp?: MouseEventHandler<HTMLCanvasElement>;
+    onPointerMove?: MouseEventHandler<HTMLCanvasElement>;
+};
 type CanvasContext = CanvasRenderingContext2D | ImageBitmapRenderingContext | WebGLRenderingContext | WebGL2RenderingContext;
 export interface RenderContext<T extends CanvasContext=CanvasContext> {
     pointers: Map<number, React.PointerEvent>;

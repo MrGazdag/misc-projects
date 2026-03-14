@@ -37,10 +37,10 @@ export default class HashiMap {
     }
     private makeHorizontalBridge(x: number, y: number, double: boolean, changes: HashiCellChange[]) {
         let left = this.findFirst(x, y, -1, 0);
-        if (left == null) return;
+        if (left == null) return false;
 
         let right = this.findFirst(x, y, 1, 0);
-        if (right == null) return;
+        if (right == null) return false;
 
         // Clicked between two cells, check if there are intercepting lines
         for (let xN = left[0]+1; xN < right[0]; xN++) {
@@ -55,10 +55,10 @@ export default class HashiMap {
     }
     private makeVerticalBridge(x: number, y: number, double: boolean, changes: HashiCellChange[]) {
         let top = this.findFirst(x, y, 0, -1);
-        if (top == null) return;
+        if (top == null) return false;
 
         let bottom = this.findFirst(x, y, 0, 1);
-        if (bottom == null) return;
+        if (bottom == null) return false;
 
         // Clicked between two cells, check if there are intercepting lines
         for (let yN = top[1]+1; yN < bottom[1]; yN++) {
@@ -74,10 +74,11 @@ export default class HashiMap {
     private clickInner(x: number, y: number, rightClicked: boolean, changes: HashiCellChange[]) {
         let cX = Math.floor(x);
         let cY = Math.floor(y);
+        if (cX < 0 || this.mapSize < cX || cY < 0 || this.mapSize < cY) return;
         let state = this.getCellState(cX, cY);
         if (HashiUtils.isCell(state)) {
             // Toggle cell crossed out
-            this.setCellState(x, y, HashiUtils.toggleCrossedCell(state), changes);
+            this.setCellState(cX, cY, HashiUtils.toggleCrossedCell(state), changes);
             return;
         }
 
@@ -115,19 +116,78 @@ export default class HashiMap {
         }
 
         // Create new bridge
-        if (Math.abs(x - 0.5) >= Math.abs(y - 0.5)) {
-            let result = this.makeHorizontalBridge(x, y, rightClicked, changes);
+        let fractX = x - Math.floor(x);
+        let fractY = y - Math.floor(y);
+        if (Math.abs(fractX - 0.5) >= Math.abs(fractY - 0.5)) {
+            let result = this.makeHorizontalBridge(cX, cY, rightClicked, changes);
             if (result) return;
-            this.makeVerticalBridge(x, y, rightClicked, changes);
+            this.makeVerticalBridge(cX, cY, rightClicked, changes);
         } else {
-            let result = this.makeVerticalBridge(x, y, rightClicked, changes);
+            let result = this.makeVerticalBridge(cX, cY, rightClicked, changes);
             if (result) return;
-            this.makeHorizontalBridge(x, y, rightClicked, changes);
+            this.makeHorizontalBridge(cX, cY, rightClicked, changes);
         }
     }
+
     public click(x: number, y: number, rightClicked: boolean) {
         let changes: HashiCellChange[] = [];
         this.clickInner(x,y,rightClicked,changes);
+        console.log((rightClicked ? "right" : "left"), "click at",x,y,", changes:", changes);
+    }
+    private validateBoard(errors: number[]): boolean {
+        let result = true;
+        for (let i = 0; i < this.cells.length; i++) {
+            let [x, y] = HashiUtils.indexToCoords(i, this.mapSize);
+            let state = this.cells[i];
+
+            if (HashiUtils.isCell(state)) {
+                let desired = HashiUtils.getDesiredBridgeCount(state);
+
+                let actual = 0;
+                actual += HashiUtils.countBridge(this.getCellState(x-1, y));
+                actual += HashiUtils.countBridge(this.getCellState(x+1, y));
+                actual += HashiUtils.countBridge(this.getCellState(x, y-1));
+                actual += HashiUtils.countBridge(this.getCellState(x, y+1));
+                if (actual > desired) {
+                    errors.push(i);
+                    result = false;
+                }
+                if (actual < desired) {
+                    result = false;
+                }
+            } else if (HashiUtils.isBridge(state)) {
+                if (HashiUtils.isVertical(state)) {
+                    let top = this.getCellState(x, y-1);
+                    if (!HashiUtils.isCell(top) && top != state) {
+                        errors.push(i);
+                        result = false;
+                        continue;
+                    }
+
+                    let bottom = this.getCellState(x, y+1);
+                    if (!HashiUtils.isCell(bottom) && bottom != state) {
+                        errors.push(i);
+                        result = false;
+                        continue;
+                    }
+                } else {
+                    let left = this.getCellState(x-1, y);
+                    if (!HashiUtils.isCell(left) && left != state) {
+                        errors.push(i);
+                        result = false;
+                        continue;
+                    }
+
+                    let right = this.getCellState(x+1, y);
+                    if (!HashiUtils.isCell(right) && right != state) {
+                        errors.push(i);
+                        result = false;
+                        continue;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     getMapSize() {
