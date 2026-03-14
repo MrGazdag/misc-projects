@@ -1,5 +1,6 @@
 html,body {
   margin: 0;
+  background-color: gray;
 }
 #root {
   height: 100vh;
@@ -16,7 +17,4 @@ html,body {
   flex-grow: 1;
   position: relative;
   display: flex;
-  .canvas-renderer {
-
-  }
 }
