@@ -11,7 +11,11 @@ export default class HashiRenderer {
     constructor(map: HashiMap) {
         this.map = map;
         this.settings = {
-            showCoords: true
+            showCoords: true,
+            highlightLastChange: false,
+            highlightCurrentIsland: true,
+            highlightErrors: true,
+            grayOutCompleted: true,
         };
     }
     private calculateCoordsText(chars: string, number: number) {
@@ -57,8 +61,8 @@ export default class HashiRenderer {
             ctx.moveTo(marginX+cW + (0.5+i)*cW, marginY+cH);
             ctx.lineTo(marginX+cW + (0.5+i)*cW, h-marginY-cH);
         }
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#0003';
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#0001';
         ctx.stroke();
 
 
@@ -82,43 +86,32 @@ export default class HashiRenderer {
             }
         }
 
-        // Cells
+        // Bridges
         for (let i = 0; i < this.map.getCells().length; i++){
             let [x,y] = HashiUtils.indexToCoords(i, mapSize);
+            let state = this.map.getCells()[i];
+
             let centerX = marginX + (x+0.5+(this.settings.showCoords ? 1 : 0)) * cW;
             let centerY = marginY + (y+0.5+(this.settings.showCoords ? 1 : 0)) * cH;
-            let state = this.map.getCells()[i];
 
             const gridWidth = cW * 0.1;
             const gridHeight = cH * 0.1;
 
-            if (HashiUtils.isCell(state)) {
-                let wasCrossedOut = HashiUtils.isCrossedCell(state);
-                if (wasCrossedOut) {
-                    state = HashiUtils.toggleCrossedCell(state);
+            if (HashiUtils.isBridge(state)) {
+                let color = "#000";
+                if (this.settings.grayOutCompleted && this.map.isConnectedToCrossed(x, y)) {
+                    color = "#888";
                 }
-                ctx.beginPath();
-                ctx.ellipse(centerX, centerY, cW/2, cH/2, 0, 0, 2 * Math.PI, false)
-                ctx.fillStyle = "#fff";
-                ctx.fill();
-                ctx.lineWidth = 5;
-                ctx.strokeStyle = '#000';
-                ctx.stroke();
-
-                ctx.fillStyle = "#000";
-                ctx.font = cW*0.75 + "px Arial";
-                Utils.centerFillText(ctx, centerX, centerY, state+"");
-                if (wasCrossedOut) {
-                    ctx.beginPath();
-                    ctx.moveTo(centerX-cW*0.5, centerY+cH*0.5);
-                    ctx.lineTo(centerX+cW*0.5, centerY-cH*0.5);
-
-                    ctx.lineWidth = 5;
-                    ctx.strokeStyle = '#000';
-                    ctx.stroke();
+                if (this.settings.highlightCurrentIsland && this.map.isCurrent(x, y)) {
+                    color = "#a3b79a";
                 }
-            } else if (HashiUtils.isBridge(state)) {
-                ctx.fillStyle = "#000f";
+                if (this.settings.highlightLastChange && this.map.isLastChange(x, y)) {
+                    color = "#2196f3";
+                }
+                if (this.settings.highlightErrors && this.map.isError(x, y)) {
+                    color = "#cc0000";
+                }
+                ctx.fillStyle = color;
                 if (state == HashiCellState.BRIDGE_HORIZONTAL) {
                     ctx.fillRect(centerX - cW/2, centerY - gridHeight/2, cW, gridHeight);
                 } else if (state == HashiCellState.BRIDGE_HORIZONTAL_DOUBLE) {
@@ -130,6 +123,56 @@ export default class HashiRenderer {
                 } else if (state == HashiCellState.BRIDGE_VERTICAL_DOUBLE) {
                     ctx.fillRect(centerX - gridWidth*1.5, centerY - cH/2, gridWidth, cH);
                     ctx.fillRect(centerX + gridWidth*0.5, centerY - cH/2, gridWidth, cH);
+                }
+            }
+
+        }
+        // Cells
+        for (let i = 0; i < this.map.getCells().length; i++){
+            let [x,y] = HashiUtils.indexToCoords(i, mapSize);
+            let state = this.map.getCells()[i];
+
+            let centerX = marginX + (x+0.5+(this.settings.showCoords ? 1 : 0)) * cW;
+            let centerY = marginY + (y+0.5+(this.settings.showCoords ? 1 : 0)) * cH;
+
+            if (HashiUtils.isCell(state)) {
+                let bg = "#fff";
+                let outline = "#000";
+                let number = "#000";
+                let cross = "#000";
+                if (this.settings.highlightCurrentIsland && this.map.isCurrent(x, y)) {
+                    outline = "#a3b79a";
+                }
+                if (this.settings.highlightLastChange && this.map.isLastChange(x, y)) {
+                    outline = "#2196f3";
+                }
+                if (this.settings.highlightErrors && this.map.isError(x, y)) {
+                    number = "#cc0000";
+                }
+
+                let wasCrossedOut = HashiUtils.isCrossedCell(state);
+                if (wasCrossedOut) {
+                    state = HashiUtils.toggleCrossedCell(state);
+                }
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY, cW/2, cH/2, 0, 0, 2 * Math.PI, false)
+                ctx.fillStyle = bg;
+                ctx.fill();
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = outline;
+                ctx.stroke();
+
+                ctx.fillStyle = number;
+                ctx.font = cW*0.75 + "px Arial";
+                Utils.centerFillText(ctx, centerX, centerY, state+"");
+                if (wasCrossedOut) {
+                    ctx.beginPath();
+                    ctx.moveTo(centerX-cW*0.45, centerY+cH*0.45);
+                    ctx.lineTo(centerX+cW*0.45, centerY-cH*0.45);
+
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = cross;
+                    ctx.stroke();
                 }
             }
         }
@@ -153,5 +196,9 @@ export default class HashiRenderer {
     }
 }
 export interface HashiRendererSettings {
-    showCoords: boolean
+    showCoords: boolean,
+    highlightLastChange: boolean,
+    highlightErrors: boolean,
+    highlightCurrentIsland: boolean,
+    grayOutCompleted: boolean
 }

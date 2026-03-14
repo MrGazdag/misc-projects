@@ -17,7 +17,8 @@ export default class HashiUtils {
         // Low level fuckery
         return state < 0;
     }
-    public static countBridge(state: HashiCellState | undefined): number {
+    public static countBridge(state: HashiCellState | undefined, filter: HashiCellState[]): number {
+        if (state == undefined || !filter.includes(state)) return 0;
         switch (state) {
             case HashiCellState.BRIDGE_VERTICAL:
             case HashiCellState.BRIDGE_HORIZONTAL:
