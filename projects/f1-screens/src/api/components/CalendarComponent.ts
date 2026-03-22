@@ -185,6 +185,7 @@ export default class CalendarComponent extends AbstractComponent {
 
                 position: props => [props.position, this.allRaceData.length],
 
+                finalRaceTx: this.getTextTexture(renderer, "final_race", " — FINAL RACE", true),
                 nextUpTx: this.getTextTexture(renderer, "next_up", " — NEXT RACE", true),
                 raceNumberTx: props => props.data.raceNumberTx,
                 nameTx: props => props.data.nameTx,

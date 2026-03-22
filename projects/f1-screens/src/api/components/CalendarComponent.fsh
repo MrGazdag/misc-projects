@@ -10,6 +10,7 @@ uniform vec2 iResolution;
 uniform float iTime;
 uniform vec2 position;
 
+uniform sampler2D finalRaceTx;
 uniform sampler2D nextUpTx;
 uniform sampler2D raceNumberTx;
 uniform sampler2D nameTx;
@@ -77,8 +78,13 @@ vec4 drawName(vec2 pos, bool selected) {
     return rectImage(nameTx, pos, center, size);
 }
 
-vec4 drawNextUp(vec2 pos) {
+vec4 drawNextUp(vec2 pos, bool final) {
     float padding = 5.;
+    if (final) {
+        vec2 size = vec2(textureSize(finalRaceTx, 0)) * 0.4;
+        vec2 center = vec2(padding + CALENDAR_ENTRY_HEIGHT + size.x/2., boxSize.y - CALENDAR_ENTRY_HEIGHT/2.);
+        return rectImage(finalRaceTx, pos, center, size) * 0.8;
+    }
     vec2 size = vec2(textureSize(nextUpTx, 0)) * 0.4;
     vec2 center = vec2(padding + CALENDAR_ENTRY_HEIGHT + size.x/2., boxSize.y - CALENDAR_ENTRY_HEIGHT/2.);
     return rectImage(nextUpTx, pos, center, size) * 0.8;
@@ -235,7 +241,7 @@ void main() {
         }
         contentColor = alphaMix(contentColor, mlifOut);
         */
-        fadedContentColor = alphaMix(fadedContentColor, drawNextUp(pos));
+        fadedContentColor = alphaMix(fadedContentColor, drawNextUp(pos, position.x == position.y-1.));
         fadedContentColor = alphaMix(fadedContentColor, drawFlag(pos, true));
         fadedContentColor = alphaMix(fadedContentColor, drawName(pos, true));
         fadedContentColor = alphaMix(fadedContentColor, drawLongTime(pos));
