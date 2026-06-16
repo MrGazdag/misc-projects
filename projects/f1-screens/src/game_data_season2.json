@@ -1334,7 +1334,150 @@
             "mapFlag": "mc",
             "lapCount": 39,
             "date": "2026-06-14T18:00:00.000Z",
-            "results": null
+            "results": {
+                "driverData": [
+                    {
+                        "playerId": "shawty",
+                        "teamId": "sauber",
+                        "startingPosition": 2,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 71.775,
+                        "time": 2992.674,
+                        "timeType": "finish",
+                        "penaltyTime": 3
+                    },
+                    {
+                        "playerId": "adre",
+                        "teamId": "ferrari",
+                        "startingPosition": 1,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 72.156,
+                        "time": 4.612,
+                        "timeType": "from_leader",
+                        "penaltyTime": 3
+                    },
+                    {
+                        "playerId": "adam",
+                        "teamId": "mclaren",
+                        "startingPosition": 3,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 73.697,
+                        "time": 52.563,
+                        "timeType": "from_leader",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "robbycalzone",
+                        "teamId": "mclaren",
+                        "startingPosition": 4,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 73.044,
+                        "time": 54.129,
+                        "timeType": "from_leader",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "zomboja",
+                        "teamId": "ferrari",
+                        "startingPosition": 5,
+                        "numberOfPitStops": 2,
+                        "bestLapTime": 72.044,
+                        "time": 1,
+                        "timeType": "lapped",
+                        "penaltyTime": 3
+                    },
+                    {
+                        "playerId": "tony",
+                        "teamId": "williams",
+                        "startingPosition": 7,
+                        "numberOfPitStops": 4,
+                        "bestLapTime": 74.342,
+                        "time": 1,
+                        "timeType": "lapped",
+                        "penaltyTime": 6
+                    },
+                    {
+                        "playerId": "derrock",
+                        "teamId": "mercedes",
+                        "startingPosition": 6,
+                        "numberOfPitStops": 4,
+                        "bestLapTime": 73.991,
+                        "time": 1,
+                        "timeType": "lapped",
+                        "penaltyTime": 6
+                    },
+                    {
+                        "playerId": "austin",
+                        "teamId": "williams",
+                        "startingPosition": 8,
+                        "numberOfPitStops": 3,
+                        "bestLapTime": 76.693,
+                        "time": null,
+                        "timeType": "did_not_finish_no_points",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "tyroion",
+                        "teamId": "sauber",
+                        "startingPosition": 9,
+                        "numberOfPitStops": 1,
+                        "bestLapTime": 77.38,
+                        "time": null,
+                        "timeType": "did_not_finish_no_points",
+                        "penaltyTime": 3
+                    },
+                    {
+                        "playerId": "tim",
+                        "teamId": "mercedes",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "patat",
+                        "teamId": "redbull",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "namas",
+                        "teamId": "alpine",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "floess",
+                        "teamId": "mercedes",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    },
+                    {
+                        "playerId": "providence",
+                        "teamId": "redbull",
+                        "startingPosition": null,
+                        "numberOfPitStops": null,
+                        "bestLapTime": null,
+                        "time": null,
+                        "timeType": "did_not_start",
+                        "penaltyTime": 0
+                    }
+                ]
+            }
         },
         {
             "map": "Baku",
