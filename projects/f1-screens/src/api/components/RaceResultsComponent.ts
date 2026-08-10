@@ -23,7 +23,7 @@ export default class RaceResultsComponent extends AbstractComponent {
         return context.mode.checkValue(e=>e==2);
     }
 
-    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
+    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLCanvasElement) {
         if (this.textureCacheMap.has(key)) {
             return this.textureCacheMap.get(key)!;
         }

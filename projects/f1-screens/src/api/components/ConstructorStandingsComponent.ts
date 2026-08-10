@@ -18,7 +18,7 @@ export default class ConstructorStandingsComponent extends AbstractComponent {
         return context.mode.checkValue(e=>e==3);
     }
 
-    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
+    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLCanvasElement) {
         if (this.textureCacheMap.has(key)) {
             return this.textureCacheMap.get(key)!;
         }

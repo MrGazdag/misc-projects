@@ -19,7 +19,7 @@ export default class DriversChampionshipComponent extends AbstractComponent {
         return context.mode.checkValue(e=>e==4);
     }
 
-    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
+    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLCanvasElement) {
         if (this.textureCacheMap.has(key)) {
             return this.textureCacheMap.get(key)!;
         }

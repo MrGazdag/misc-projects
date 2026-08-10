@@ -15,7 +15,7 @@ export default class PodiumComponent extends AbstractComponent {
         return context.mode.checkValue(e=>e==1);
     }
 
-    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
+    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLCanvasElement) {
         if (this.textureCacheMap.has(key)) {
             return this.textureCacheMap.get(key)!;
         }

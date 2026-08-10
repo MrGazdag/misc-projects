@@ -6,7 +6,7 @@ export default class TeamData {
     private readonly gameData: GameData;
     private readonly data: RawTeamData;
 
-    private icon?: HTMLImageElement;
+    private icon?: HTMLCanvasElement;
 
     constructor(gameData: GameData, data: RawTeamData) {
         this.gameData = gameData;

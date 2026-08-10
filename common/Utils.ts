@@ -48,12 +48,17 @@ export default class Utils {
         return from + (to - from) * percentage;
     }
 
-    public static loadImage(src: string): Promise<HTMLImageElement> {
+    public static loadImage(src: string): Promise<HTMLCanvasElement> {
         return new Promise((resolve, reject)=>{
             let img = new Image();
             img.crossOrigin = "anonymous";
             img.onload = ()=>{
-                resolve(img);
+                let canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                let ctx = canvas.getContext("2d")!;
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas);
             };
             img.onerror = reject;
             img.src = src;

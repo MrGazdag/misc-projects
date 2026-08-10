@@ -15,7 +15,7 @@ export default class CalendarComponent extends AbstractComponent {
         return context.mode.checkValue(e=>e==5);
     }
 
-    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLImageElement) {
+    private getImageTexture(renderer: GLRenderer, key: string, value: HTMLCanvasElement) {
         if (this.textureCacheMap.has(key)) {
             return this.textureCacheMap.get(key)!;
         }

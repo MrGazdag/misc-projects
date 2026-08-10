@@ -8,10 +8,10 @@ export default class GameData {
     private readonly data: RawGameData;
     private readonly drivers: Map<string, DriverData>;
     private readonly teams: Map<string, TeamData>;
-    private readonly countryImageCache: Map<string, HTMLImageElement>;
+    private readonly countryImageCache: Map<string, HTMLCanvasElement>;
     private readonly raceData: RaceData[];
     private readonly pointMap: Map<number,number>;
-    private reserveIcon?: HTMLImageElement;
+    private reserveIcon?: HTMLCanvasElement;
 
     private readonly teamPlacementsCache: Map<number,PlacementPoints<TeamData>[]>;
     private readonly driverPlacementsCache: Map<number,PlacementPoints<DriverData>[]>;

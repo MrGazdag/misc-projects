@@ -8,8 +8,8 @@ export default class DriverData {
     private readonly data: RawDriverData;
     private readonly team: TeamData | null;
 
-    private icon?: HTMLImageElement;
-    private flag?: HTMLImageElement;
+    private icon?: HTMLCanvasElement;
+    private flag?: HTMLCanvasElement;
 
     constructor(gameData: GameData, raw: RawDriverData) {
         this.gameData = gameData;

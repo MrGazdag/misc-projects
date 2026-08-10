@@ -9,7 +9,7 @@ export default class RaceData {
     private readonly index: number;
     private readonly data: RawRaceData;
     private readonly date: Date;
-    private flag?: HTMLImageElement;
+    private flag?: HTMLCanvasElement;
     private readonly driverMap: Map<DriverData, RaceDriverData> | null;
 
     constructor(gameData: GameData, index: number, raw: RawRaceData) {
