@@ -40,8 +40,9 @@ export default class HeaderComponent extends AbstractComponent {
                 key = "map_overview";
                 value = "Overview";
             } else {
-                key = "map_" + raceIndex;
-                value = context.gameData.getRaceData(raceIndex).getMap();
+                let map = context.gameData.getRaceData(raceIndex).getMap();
+                key = "map_header_" + map;
+                value = map;
             }
             return this.getTexture(renderer, key, value, false);
         });
